@@ -1,3 +1,28 @@
+/* Transparent navbar for immediate effect on about page */
+.navbar.bg-dark {
+  background-color: rgba(34, 34, 34, 0.3) !important;
+  backdrop-filter: blur(4px);
+  background: transparent !important;
+}
+/* Transparent navbar for immediate effect on commodity-table page */
+.navbar.bg-dark {
+  background-color: rgba(34, 34, 34, 0.3) !important;
+  backdrop-filter: blur(4px);
+  background: transparent !important;
+}
+/* Transparent navbar and hero styles for immediate effect */
+.navbar.bg-dark {
+  background-color: rgba(34, 34, 34, 0.3) !important;
+  backdrop-filter: blur(4px);
+  background: transparent !important;
+}
+.hero-bg {
+  background: url('https://dto9r5vaiz7bu.cloudfront.net/0sjc0nktzaamo/source.jpg') center center/cover no-repeat;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
 /* Handsontable container styling moved from inline */
 #hot-container {
   margin: 0px;

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Comic Neue Google Fonts -->
+  <!-- Preconnect and load Comic Neue Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,8 +17,6 @@
   <!-- Custom styles -->
   <link href="css/custom.css" rel="stylesheet">
 
-  <!-- Table styles from your upload -->
-  <link type="text/css" rel="stylesheet" href="resources/sheet.css">
   <style>
     html, body {
       font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
@@ -24,17 +24,7 @@
       margin: 0;
       padding: 0;
     }
-    .navbar.bg-dark {
-      background-color: rgba(34, 34, 34, 0.3) !important;
-      backdrop-filter: blur(4px);
-    }
-    .hero-bg {
-      background: url('https://dto9r5vaiz7bu.cloudfront.net/0sjc0nktzaamo/source.jpg') center center/cover no-repeat;
-      min-height: 100vh;
-      width: 100%;
-      display: flex;
-      align-items: center;
-    }
+    /* ...existing code... */
     .hero-btn-transparent {
       background: transparent !important;
       border: 2px solid #fff !important;
@@ -50,8 +40,6 @@
       color: #ff2222 !important;
       border-color: #ff2222 !important;
     }
-    .ritz .waffle { width: 100%; max-width: 100%; }
-    .table-wrapper { overflow-x: auto; }
   </style>
 </head>
 
@@ -59,14 +47,13 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="#">IchaTV</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav d-flex justify-content-center w-100">
           <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="commodity-table.html">Multi Contract Cargo Tracker</a></li>
           <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
@@ -83,7 +70,7 @@
   <!-- Hero Section -->
   <section class="hero-bg text-light text-center">
     <div class="container">
-  <img src="https://static.wixstatic.com/media/3d8a76_2dffae066b5a470db1e953a2b54d6521~mv2.png/v1/fill/w_379,h_346,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Rav%203.png" alt="Hero Image" class="mb-4" style="max-width: 300px; height: auto;">
+  <img src="https://static.wixstatic.com/media/3d8a76_2dffae066b5a470db1e953a2b54d6521~mv2.png/v1/fill/w_379,h_346,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Rav%203.png" alt="Hero Image" class="mb-4" style="max-width: 300px; height: auto;" loading="lazy">
   <h1 class="display-3 fw-bold">Welcome to <span style="color: #ff2222;">Icha's Place</span></h1>
       <p class="lead mt-3">I play Star Citizen and do Box Monkey Stuff </p>
       <div class="mt-4">
@@ -95,8 +82,8 @@
   </section> <!-- ✅ Hero closes here -->
 
   <!-- Bootstrap JS (for navbar toggler) -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" crossorigin="anonymous" defer></script>
 </body>
 </html>
 
