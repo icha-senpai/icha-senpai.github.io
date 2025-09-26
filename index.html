@@ -16,6 +16,74 @@
   <!-- Table styles from your upload -->
   <link type="text/css" rel="stylesheet" href="resources/sheet.css">
   <style>
+    html, body, .hero-bg, .hero-content, .hero-content .container {
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .hero-btn-transparent {
+      background: transparent !important;
+      border: 2px solid #fff !important;
+      color: #ff2222 !important;
+      box-shadow: none !important;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .hero-btn-transparent:hover, .hero-btn-transparent:focus {
+      background: rgba(255,255,255,0.15) !important;
+      color: #ff2222 !important;
+      border-color: #ff2222 !important;
+    }
+    .hero-content, .hero-content .container {
+      /* ...existing code... */
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .hero-bg {
+      /* ...existing code... */
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .hero-content, .hero-content .container {
+      width: 100vw;
+      height: 100vh;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+    body {
+      padding-top: 0 !important;
+    }
+    html, body, .container, main, footer {
+      border-bottom: none !important;
+    }
+    .navbar.bg-dark {
+      background-color: rgba(34, 34, 34, 0.3) !important;
+      backdrop-filter: blur(4px);
+    }
+    .hero-bg {
+      background: url('https://dto9r5vaiz7bu.cloudfront.net/0sjc0nktzaamo/source.jpg') center center/cover no-repeat fixed;
+      min-height: 100vh;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
     .ritz .waffle { width: 100%; max-width: 100%; }
     .table-wrapper { overflow-x: auto; }
     html, body {
@@ -54,14 +122,15 @@
   </nav>
 
   <!-- Hero Section -->
-  <section class="bg-dark text-light text-center d-flex align-items-center" style="min-height: 100vh;">
+  <section class="hero-bg text-light text-center">
     <div class="container">
-      <h1 class="display-3 fw-bold">Welcome to <span class="text-primary">Icha's Place</span></h1>
+  <img src="https://static.wixstatic.com/media/3d8a76_2dffae066b5a470db1e953a2b54d6521~mv2.png/v1/fill/w_379,h_346,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Rav%203.png" alt="Hero Image" class="mb-4" style="max-width: 300px; height: auto;">
+  <h1 class="display-3 fw-bold">Welcome to <span style="color: #ff2222;">Icha's Place</span></h1>
       <p class="lead mt-3">I’m learning HTML, CSS, and more. This site will grow with me 🚀</p>
       <div class="mt-4">
-  <a href="http://www.twitch.tv/ichatv" target="_blank" class="btn btn-primary btn-lg me-2">Watch on Twitch</a>
-  <a href="https://github.com/icha-senpai/" target="_blank" class="btn btn-outline-light btn-lg me-2">Visit GitHub</a>
-  <a href="commodity-table.html" class="btn btn-success btn-lg">View Multi Contract Cargo Tracker</a>
+  <a href="http://www.twitch.tv/ichatv" target="_blank" class="hero-btn-transparent btn btn-lg me-2">Watch on Twitch</a>
+  <a href="https://github.com/icha-senpai/" target="_blank" class="hero-btn-transparent btn btn-lg me-2">Visit GitHub</a>
+  <a href="commodity-table.html" class="hero-btn-transparent btn btn-lg">View Multi Contract Cargo Tracker</a>
       </div>
     </div>
   </section> <!-- ✅ Hero closes here -->
