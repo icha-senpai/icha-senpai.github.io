@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Commodity Table - Icha's Place</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/custom.css" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="resources/sheet.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hyperformula@2.6.0/dist/hyperformula.full.min.js"></script>
+  <style>
+    .handsontable, .handsontable td, .handsontable th {
+      font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
+    }
+    html, body {
+      height: auto !important;
+      min-height: 100%;
+      overflow-x: auto !important;
+      overflow-y: auto !important;
+      font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">IchaTV</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="commodity-table.html">Multi Contract Cargo Tracker</a></li>
+          <li class="nav-item"><a class="nav-link" href="http://www.twitch.tv/ichatv" target="_blank">Twitch</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://www.youtube.com/user/ichabob3901" target="_blank">YouTube</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://x.com/Its__Icha" target="_blank">X</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://www.facebook.com/Volniks/" target="_blank">Facebook</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://github.com/icha-senpai/" target="_blank">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container py-5">
+  <h2 class="mb-4">Multi Contract Cargo Tracker</h2>
+    <div id="hot-container" style="margin:0px;padding:0px;position:relative;width:100%;height:600px;"></div>
+    <a href="index.html" class="btn btn-secondary mt-4">Back to Home</a>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hotData = [
+  ['Commodity', 'Dropoff 1', 'Dropoff 2', 'Dropoff 3', 'Dropoff 4', 'Dropoff 5', 'SCU Total', 'Contract Payout', 'Contract Payout (num)'],
+  ['Aluminum', '', '', '', null, null, '', '', ''],
+  ['Carbon', '', '', '', null, null, '', '', ''],
+  ['Corundum', '', '', '', null, null, '', '', ''],
+  ['Ice', '', '', '', null, null, '', '', ''],
+  ['Quartz', '', '', '', null, null, '', '', ''],
+  ['Proc Food', '', '', '', null, null, '', '', ''],
+  ['Silicon', '', '', '', null, null, '', '', ''],
+  ['Stims', '', '', '', null, null, '', '', ''],
+  ['Titanium', '', '', '', null, null, '', '', ''],
+  ['Tin', '', '', '', null, null, '', '', ''],
+  ['Tungsten', '', '', '', null, null, '', '', ''],
+  ['Waste', '', '', '', null, null, '', '', ''],
+  [null, null, null, null, null, null, null, null, null],
+  // 109 extra empty rows
+  ...Array.from({length: 109}, () => Array(9).fill('')),
+  ['Totals', '=SUM(b2:b13)', '=SUM(c2:c13)', '=SUM(d2:d13)', '=SUM(e2:e13)', '=SUM(f2:f13)', '=SUM(g2:g13)', '=SUM(h2:h13)', '=SUM(i2:i13)', '=SUM(i2:i13)']
+      ];
+      const container = document.getElementById('hot-container');
+      const hot = new Handsontable(container, {
+        data: hotData,
+        rowHeaders: true,
+        colHeaders: true,
+        licenseKey: 'non-commercial-and-evaluation',
+        width: '100%',
+        height: 600,
+        stretchH: 'all',
+        hiddenColumns: {
+          columns: [8],
+          indicators: false
+        },
+        hiddenRows: {
+          rows: [],
+          indicators: false
+        },
+        manualColumnResize: true,
+        manualRowResize: true,
+        filters: true,
+        dropdownMenu: true,
+        contextMenu: true,
+        readOnly: false,
+        comments: true,
+        cells: function(row, col) {
+          const cellProperties = {};
+          // Add dropdown to column A (except header and totals row)
+          const commodityTypes = [
+            'AcryliPlex Composite',
+            'Audio Visual Equipment',
+            'Bioplastic',
+            'Carbon-Silk',
+            'Construction Materials',
+            'Diamond Laminate',
+            'DynaFlex',
+            'Kopion Horn',
+            'Luminalia Gift Box',
+            'Marok Gem',
+            'Neograph',
+            'Omnapoxy',
+            'Party Favors',
+            'Red Festival Envelope',
+            'Ship Ammunition',
+            'Souvenirs',
+            'Thermalfoam',
+            'Year of the Dog Envelope',
+            'Year of the Monkey Envelope',
+            'Year of the Pig',
+            'Year of the Ram Envelope',
+            'Year of the Rooster Envelope',
+            'Agricium',
+            'Agricium Ore',
+            'Aluminum',
+            'Aluminum Ore',
+            'Borase',
+            'Borase Ore',
+            'Carbon',
+            'Cobalt',
+            'Copper',
+            'Copper Ore',
+            'Gold',
+            'Gold Ore',
+            'Iron',
+            'Iron Ore',
+            'Mercury',
+            'Riccite',
+            'Silicon',
+            'Stileron',
+            'Tin',
+            'Titanium',
+            'Titanium Ore',
+            'Tungsten',
+            'Tungsten Ore',
+            "Xa' Pyen",
+            'Agricultural Supplies',
+            'DCSR2',
+            'Ranta Dung',
+            'Altruciatoxin',
+            'Distilled Spirits',
+            "E'tam",
+            'Gasping Weevil Eggs',
+            'Maze',
+            'Neon',
+            'Osoian Hides',
+            'Revenant Tree Pollen',
+            'SLAM',
+            'Stims',
+            'WiDow',
+            'Amioshi Plague',
+            'Degnous Root',
+            'Golden Medmons',
+            'Heart of the Woods',
+            'Jumping Limes',
+            'Pitambu',
+            'Prota',
+            'Revenant Pods',
+            'Sunset Berries',
+            'Ammonia',
+            'Argon',
+            'Astatine',
+            'Chlorine',
+            'Fluorine',
+            'Helium',
+            'Hydrogen',
+            'Iodine',
+            'Methane',
+            'Nitrogen',
+            'Partillium',
+            'Pressurized Ice',
+            'Aphorite',
+            'Beryl',
+            'Beryl Raw',
+            'Bexalite',
+            'Bexalite Raw',
+            'Corundum',
+            'Corundum Raw',
+            'Diamond',
+            'Diamond Raw',
+            'Dolivine',
+            'Hadanite',
+            'Hephaestanite',
+            'Hephaestanite Raw',
+            'Janalite',
+            'Laranite',
+            'Laranite Raw',
+            'Potassium',
+            'Quantainium',
+            'Quantainium Raw',
+            'Quartz',
+            'Quartz Raw',
+            'Taranite',
+            'Taranite Raw',
+            'Atlasium',
+            'Beradom',
+            'Dymantium',
+            'Feynmaline',
+            'Glacosite',
+            'Steel',
+            'Compboard',
+            'Scrap',
+            'Fresh Food',
+            'Human Food Bars',
+            'Processed Food',
+            'Inert Materials',
+            'Medical Supplies',
+            'Recycled Material Composite',
+            'Waste',
+            'Other',
+            'Custom'
+          ];
+          if (col === 0 && row > 0 && row < 14) {
+            cellProperties.editor = 'select';
+            cellProperties.selectOptions = commodityTypes;
+          }
+          // Make the last row bold and read-only
+          if (row === 14) {
+            cellProperties.className = 'htBold';
+            cellProperties.readOnly = true;
+          }
+          // Make A1, G1, and H1 read-only (row 0, col 0, 6, 7)
+          if (row === 0 && (col === 0 || col === 6 || col === 7)) {
+            cellProperties.readOnly = true;
+          }
+          // Format currency columns (H)
+          if (col === 7 && row > 0 && row < 14) {
+            cellProperties.type = 'text';
+            cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
+              Handsontable.renderers.TextRenderer.apply(this, arguments);
+              td.style.color = '#007bff';
+              td.style.fontWeight = 'bold';
+              if (!isNaN(value) && value !== null && value !== '') {
+                td.textContent = '$' + Number(value).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+              }
+            };
+          }
+          // Hide helper column I from styling
+          if (col === 8) {
+            cellProperties.readOnly = true;
+          }
+          return cellProperties;
+        },
+        dropdownMenu: [
+          'filter_by_condition', 'filter_by_value', 'filter_action_bar',
+          'freeze_column', 'freeze_row', 'remove_row', 'remove_col',
+          'row_above', 'row_below', 'col_left', 'col_right',
+          'clear_column', 'clear_custom_sort', 'undo', 'redo',
+          'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
+          'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
+        ],
+        contextMenu: [
+          'row_above', 'row_below', 'col_left', 'col_right',
+          'remove_row', 'remove_col', 'undo', 'redo',
+          'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
+          'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
+        ],
+        formulas: {
+          engine: HyperFormula
+        },
+        allowInsertRow: true,
+        allowInsertColumn: true,
+        allowRemoveRow: true,
+        allowRemoveColumn: true,
+        manualColumnFreeze: true,
+        manualRowMove: true,
+        manualColumnMove: true,
+        autoColumnSize: true,
+        autoRowSize: true,
+        multiColumnSorting: true,
+        multiRowSorting: true
+  });
+  // Expose Handsontable instance for external scripts (after initialization)
+  container.handsontableInstance = hot;
+    });
+  </script>
+  <script src="commodity-table.js"></script>
+</body>
+</html>
