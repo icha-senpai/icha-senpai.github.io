@@ -64,13 +64,36 @@
   color: #fff !important;
   border-color: #fff !important;
 }
+
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 50px;
   padding-bottom: 20px;
-  background-color: #A3A3A3;
+  background-color: #181818;
+  color: #f3f3f3;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .container {
   text-align: center;
+  color: #f3f3f3;
+  font-size: 1.15rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
+
+h1, h2, h3, h4, h5, h6 {
+  color: #fff !important;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  font-weight: 700;
+}
+
+/* Improve table readability */
+.handsontable, .handsontable td, .handsontable th, .ht_master, .htCore {
+  background-color: #222 !important;
+  color: #f3f3f3 !important;
+  font-size: 1.08em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+

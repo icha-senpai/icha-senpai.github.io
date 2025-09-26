@@ -68,25 +68,37 @@
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const hotData = [
-  ['Commodity', 'Dropoff 1', 'Dropoff 2', 'Dropoff 3', 'Dropoff 4', 'Dropoff 5', 'SCU Total', 'Contract Payout', 'Contract Payout (num)'],
-  ['Aluminum', '', '', '', null, null, '', '', ''],
-  ['Carbon', '', '', '', null, null, '', '', ''],
-  ['Corundum', '', '', '', null, null, '', '', ''],
-  ['Ice', '', '', '', null, null, '', '', ''],
-  ['Quartz', '', '', '', null, null, '', '', ''],
-  ['Proc Food', '', '', '', null, null, '', '', ''],
-  ['Silicon', '', '', '', null, null, '', '', ''],
-  ['Stims', '', '', '', null, null, '', '', ''],
-  ['Titanium', '', '', '', null, null, '', '', ''],
-  ['Tin', '', '', '', null, null, '', '', ''],
-  ['Tungsten', '', '', '', null, null, '', '', ''],
-  ['Waste', '', '', '', null, null, '', '', ''],
-  [null, null, null, null, null, null, null, null, null],
-  // 109 extra empty rows
-  ...Array.from({length: 109}, () => Array(9).fill('')),
-  ['Totals', '=SUM(b2:b13)', '=SUM(c2:c13)', '=SUM(d2:d13)', '=SUM(e2:e13)', '=SUM(f2:f13)', '=SUM(g2:g13)', '=SUM(h2:h13)', '=SUM(i2:i13)', '=SUM(i2:i13)']
+      // Define the header row
+      const hotHeader = ['Commodity', 'Dropoff 1', 'Dropoff 2', 'Dropoff 3', 'Dropoff 4', 'Dropoff 5', 'SCU Total', 'Contract Payout', 'Contract Payout (num)'];
+      // Define the commodity names for the first 13 rows
+      const commodityNames = [
+        'Aluminum', 'Carbon', 'Corundum', 'Ice', 'Quartz', 'Proc Food', 'Silicon', 'Stims', 'Titanium', 'Tin', 'Tungsten', 'Waste', ''
       ];
+      // Generate rows 2-14 (1-based, 0-based index 1-13) with commodity names and formulas
+      const hotRows = commodityNames.map((name, i) => {
+        const rowNum = i + 2; // Excel-style row number
+        return [name, '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
+      });
+      // Generate rows 15-123 (0-based index 14-122) as blank with formula in G
+      const extraRows = Array.from({length: 109}, (_, i) => {
+        const rowNum = 15 + i;
+        return ['', '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
+      });
+      // Totals row (row 124, 0-based index 123)
+      const totalsRow = [
+        'Totals',
+        '=SUM(B2:B123)',
+        '=SUM(C2:C123)',
+        '=SUM(D2:D123)',
+        '=SUM(E2:E123)',
+        '=SUM(F2:F123)',
+        '=SUM(G2:G123)',
+        '=SUM(H2:H123)',
+        '=SUM(I2:I123)',
+        '=SUM(I2:I123)'
+      ];
+      // Combine all rows
+      const hotData = [hotHeader, ...hotRows, ...extraRows, totalsRow];
       const container = document.getElementById('hot-container');
       const hot = new Handsontable(container, {
         data: hotData,
@@ -113,136 +125,32 @@
         comments: true,
         cells: function(row, col) {
           const cellProperties = {};
-          // Add dropdown to column A (except header and totals row)
-          const commodityTypes = [
-            'AcryliPlex Composite',
-            'Audio Visual Equipment',
-            'Bioplastic',
-            'Carbon-Silk',
-            'Construction Materials',
-            'Diamond Laminate',
-            'DynaFlex',
-            'Kopion Horn',
-            'Luminalia Gift Box',
-            'Marok Gem',
-            'Neograph',
-            'Omnapoxy',
-            'Party Favors',
-            'Red Festival Envelope',
-            'Ship Ammunition',
-            'Souvenirs',
-            'Thermalfoam',
-            'Year of the Dog Envelope',
-            'Year of the Monkey Envelope',
-            'Year of the Pig',
-            'Year of the Ram Envelope',
-            'Year of the Rooster Envelope',
-            'Agricium',
-            'Agricium Ore',
-            'Aluminum',
-            'Aluminum Ore',
-            'Borase',
-            'Borase Ore',
-            'Carbon',
-            'Cobalt',
-            'Copper',
-            'Copper Ore',
-            'Gold',
-            'Gold Ore',
-            'Iron',
-            'Iron Ore',
-            'Mercury',
-            'Riccite',
-            'Silicon',
-            'Stileron',
-            'Tin',
-            'Titanium',
-            'Titanium Ore',
-            'Tungsten',
-            'Tungsten Ore',
-            "Xa' Pyen",
-            'Agricultural Supplies',
-            'DCSR2',
-            'Ranta Dung',
-            'Altruciatoxin',
-            'Distilled Spirits',
-            "E'tam",
-            'Gasping Weevil Eggs',
-            'Maze',
-            'Neon',
-            'Osoian Hides',
-            'Revenant Tree Pollen',
-            'SLAM',
-            'Stims',
-            'WiDow',
-            'Amioshi Plague',
-            'Degnous Root',
-            'Golden Medmons',
-            'Heart of the Woods',
-            'Jumping Limes',
-            'Pitambu',
-            'Prota',
-            'Revenant Pods',
-            'Sunset Berries',
-            'Ammonia',
-            'Argon',
-            'Astatine',
-            'Chlorine',
-            'Fluorine',
-            'Helium',
-            'Hydrogen',
-            'Iodine',
-            'Methane',
-            'Nitrogen',
-            'Partillium',
-            'Pressurized Ice',
-            'Aphorite',
-            'Beryl',
-            'Beryl Raw',
-            'Bexalite',
-            'Bexalite Raw',
-            'Corundum',
-            'Corundum Raw',
-            'Diamond',
-            'Diamond Raw',
-            'Dolivine',
-            'Hadanite',
-            'Hephaestanite',
-            'Hephaestanite Raw',
-            'Janalite',
-            'Laranite',
-            'Laranite Raw',
-            'Potassium',
-            'Quantainium',
-            'Quantainium Raw',
-            'Quartz',
-            'Quartz Raw',
-            'Taranite',
-            'Taranite Raw',
-            'Atlasium',
-            'Beradom',
-            'Dymantium',
-            'Feynmaline',
-            'Glacosite',
-            'Steel',
-            'Compboard',
-            'Scrap',
-            'Fresh Food',
-            'Human Food Bars',
-            'Processed Food',
-            'Inert Materials',
-            'Medical Supplies',
-            'Recycled Material Composite',
-            'Waste',
-            'Other',
-            'Custom'
-          ];
-          if (col === 0 && row > 0 && row < 14) {
+          // Commodity dropdown for all rows 1-122 (2-123 Excel), col 0
+          const isDataRow = row > 0 && row < 123;
+          if (col === 0 && isDataRow) {
             cellProperties.editor = 'select';
-            cellProperties.selectOptions = commodityTypes;
+            cellProperties.selectOptions = [
+              'AcryliPlex Composite', 'Audio Visual Equipment', 'Bioplastic', 'Carbon-Silk', 'Construction Materials',
+              'Diamond Laminate', 'DynaFlex', 'Kopion Horn', 'Luminalia Gift Box', 'Marok Gem', 'Neograph', 'Omnapoxy',
+              'Party Favors', 'Red Festival Envelope', 'Ship Ammunition', 'Souvenirs', 'Thermalfoam', 'Year of the Dog Envelope',
+              'Year of the Monkey Envelope', 'Year of the Pig', 'Year of the Ram Envelope', 'Year of the Rooster Envelope',
+              'Agricium', 'Agricium Ore', 'Aluminum', 'Aluminum Ore', 'Borase', 'Borase Ore', 'Carbon', 'Cobalt', 'Copper',
+              'Copper Ore', 'Gold', 'Gold Ore', 'Iron', 'Iron Ore', 'Mercury', 'Riccite', 'Silicon', 'Stileron', 'Tin',
+              'Titanium', 'Titanium Ore', 'Tungsten', 'Tungsten Ore', "Xa' Pyen", 'Agricultural Supplies', 'DCSR2',
+              'Ranta Dung', 'Altruciatoxin', 'Distilled Spirits', "E'tam", 'Gasping Weevil Eggs', 'Maze', 'Neon',
+              'Osoian Hides', 'Revenant Tree Pollen', 'SLAM', 'Stims', 'WiDow', 'Amioshi Plague', 'Degnous Root',
+              'Golden Medmons', 'Heart of the Woods', 'Jumping Limes', 'Pitambu', 'Prota', 'Revenant Pods', 'Sunset Berries',
+              'Ammonia', 'Argon', 'Astatine', 'Chlorine', 'Fluorine', 'Helium', 'Hydrogen', 'Iodine', 'Methane', 'Nitrogen',
+              'Partillium', 'Pressurized Ice', 'Aphorite', 'Beryl', 'Beryl Raw', 'Bexalite', 'Bexalite Raw', 'Corundum',
+              'Corundum Raw', 'Diamond', 'Diamond Raw', 'Dolivine', 'Hadanite', 'Hephaestanite', 'Hephaestanite Raw',
+              'Janalite', 'Laranite', 'Laranite Raw', 'Potassium', 'Quantainium', 'Quantainium Raw', 'Quartz', 'Quartz Raw',
+              'Taranite', 'Taranite Raw', 'Atlasium', 'Beradom', 'Dymantium', 'Feynmaline', 'Glacosite', 'Steel', 'Compboard',
+              'Scrap', 'Fresh Food', 'Human Food Bars', 'Processed Food', 'Inert Materials', 'Medical Supplies',
+              'Recycled Material Composite', 'Waste', 'Other', 'Custom'
+            ];
           }
-          // Make the last row bold and read-only
-          if (row === 14) {
+          // Make the totals row (row 123) bold and read-only
+          if (row === 123) {
             cellProperties.className = 'htBold';
             cellProperties.readOnly = true;
           }
@@ -250,8 +158,8 @@
           if (row === 0 && (col === 0 || col === 6 || col === 7)) {
             cellProperties.readOnly = true;
           }
-          // Format currency columns (H)
-          if (col === 7 && row > 0 && row < 14) {
+          // Format currency columns (H) for data rows
+          if (col === 7 && isDataRow) {
             cellProperties.type = 'text';
             cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
               Handsontable.renderers.TextRenderer.apply(this, arguments);
