@@ -90,11 +90,11 @@
         height: 600,
         stretchH: 'all',
         hiddenColumns: {
-          columns: [8],
+          columns: [4,5,8],
           indicators: false
         },
         hiddenRows: {
-          rows: [],
+          rows: Array.from({length: 109}, (_, i) => i + 14),
           indicators: false
         },
         manualColumnResize: true,
