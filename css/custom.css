@@ -1,3 +1,24 @@
+/* Handsontable container styling moved from inline */
+#hot-container {
+  margin: 0px;
+  padding: 0px;
+  position: relative;
+  width: 100%;
+  height: 600px;
+}
+/* Transparent Back to Home button style */
+.btn-back-transparent {
+  background: rgba(0,0,0,0.1) !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+  box-shadow: none !important;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-back-transparent:hover, .btn-back-transparent:focus {
+  background: rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 50px;
