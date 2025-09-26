@@ -1,72 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
+  <meta name="description" content="Icha's first personal website with links to Twitch, YouTube, X, and more.">
+  <meta name="author" content="Icha">
   <title>Icha's Place</title>
 
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Bootstrap core CSS -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Custom styles for this template -->
+  <!-- Custom styles -->
   <link href="css/custom.css" rel="stylesheet">
 
-  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-  <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
-
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+  <!-- Table styles from your upload -->
+  <link type="text/css" rel="stylesheet" href="resources/sheet.css">
+  <style>
+    /* Keep your uploaded table styles */
+    .ritz .waffle { width: 100%; max-width: 100%; }
+    .table-wrapper { overflow-x: auto; }
+  </style>
 </head>
 
 <body>
-
-  <nav class="navbar navbar-inverse navbar-fixed-top">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">IchaTV</a>
-      </div>
-      <div id="navbar" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="http://www.twitch.tv/ichatv" target= "_blank">Twitch</a></li>
-          <li><a href="https://https://www.youtube.com/user/ichabob3901" target= "_blank">Youtube</a></li>
-          <li><a href="https://https://x.com/Its__Icha" target= "_blank">X</a></li>
-          <li><a href="https://https://www.facebook.com/Volniks/" target= "_blank">Facebook</a></li>
-          <li><a href="https://github.com/icha-senpai/" target= "_blank">Github</a></li>
+      <a class="navbar-brand fw-bold" href="#">IchaTV</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="http://www.twitch.tv/ichatv" target="_blank">Twitch</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://www.youtube.com/user/ichabob3901" target="_blank">YouTube</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://x.com/Its__Icha" target="_blank">X</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://www.facebook.com/Volniks/" target="_blank">Facebook</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://github.com/icha-senpai/" target="_blank">GitHub</a></li>
         </ul>
-      </div><!--/.nav-collapse -->
+      </div>
     </div>
   </nav>
 
-  <div class="container">
-      <h1>Welcome to my <strong>FIRST</strong> Website!</h1>
-      <p class="lead">I am learning HTML/CSS. This website will be changing soon :)</p>
-      <p> Hey while your here why dont you click those links and check out my places </p>
+  <!-- Hero Section -->
+  <section class="bg-dark text-light text-center d-flex align-items-center" style="min-height: 100vh;">
+    <div class="container">
+      <h1 class="display-3 fw-bold">Welcome to <span class="text-primary">Icha's Place</span></h1>
+      <p class="lead mt-3">I’m learning HTML, CSS, and more. This site will grow with me 🚀</p>
+      <div class="mt-4">
+        <a href="http://www.twitch.tv/ichatv" target="_blank" class="btn btn-primary btn-lg me-2">Watch on Twitch</a>
+        <a href="https://github.com/icha-senpai/" target="_blank" class="btn btn-outline-light btn-lg">Visit GitHub</a>
       </div>
+    </div>
+  </section>
 
-  </div><!-- /.container -->
+  <!-- About Section -->
+  <div class="container py-5">
+    <h2>About This Site</h2>
+    <p>This is my <strong>first website</strong> built with HTML and Bootstrap 5. 
+       I’ll be updating it with new styles, features, and content as I keep learning web development.</p>
+  </div>
 
+  <!-- Table Section -->
+  <div class="container py-5">
+    <h2 class="mb-4">Commodity Table</h2>
+    <div class="card shadow-lg p-3">
+      <div class="table-wrapper">
+        <!-- Inserted table from Table.html -->
+        <div class="ritz grid-container" dir="ltr">
+          <table class="waffle" cellspacing="0" cellpadding="0"><thead><tr><th class="row-header freezebar-vertical-handle"></th><th id="1029108189C0" style="width:224px;" class="column-headers-background">A</th><th id="1029108189C1" style="width:184px;" class="column-headers-background">B</th><th id="1029108189C2" style="width:182px;" class="column-headers-background">C</th><th id="1029108189C3" style="width:189px;" class="column-headers-background">D</th><th id="1029108189C6" style="width:130px;" class="column-headers-background">G</th><th id="1029108189C7" style="width:287px;" class="column-headers-background">H</th></tr></thead><tbody><tr style="height: 90px"><th id="1029108189R0" style="height: 90px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 90px">1</div></th><td class="s0" dir="ltr"></td><td class="s1" dir="ltr" colspan="4">Just edit the Dropoffs for whatever you need on your route. You can add more commodity types by clicking the pencil icon at the bottom of the dropdown. Unhide extra rows and columns for more stops and commodities. Clear commodity by erasing text.</td><td class="s2" dir="ltr"></td></tr><tr style="height: 39px"><th id="1029108189R1" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">2</div></th><td class="s3" dir="ltr"><div style="display:flex; vertical-align:middle"><svg width="1.25em" viewBox="0 0 20 20" style="display: inline; padding-right: max(6px, 0.25em)"><g id="dropdown-table-header-icon"><path d="M15 9L12 12L9 9H15Z" fill="#ffffff"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M7 4H13C16.31 4 19 6.69 19 10C19 13.31 16.31 16 13 16H7C3.69 16 1 13.31 1 10C1 6.69 3.69 4 7 4ZM7 14.5H13C15.48 14.5 17.5 12.48 17.5 10C17.5 7.52 15.48 5.5 13 5.5H7C4.52 5.5 2.5 7.52 2.5 10C2.5 12.48 4.52 14.5 7 14.5Z" fill="#ffffff"></path></g></svg><div>Commodity</div></div></td><td class="s4" dir="ltr">Dropoff 1</td><td class="s4" dir="ltr">Dropoff 2</td><td class="s4" dir="ltr">Dropoff 3</td><td class="s4" dir="ltr">SCU Total</td><td class="s4" dir="ltr">Contract Payout</td></tr><tr><th style="height:3px;" class="freezebar-cell freezebar-horizontal-handle"></th><td class="freezebar-cell"></td><td class="freezebar-cell"></td><td class="freezebar-cell"></td><td class="freezebar-cell"></td><td class="freezebar-cell"></td><td class="freezebar-cell"></td></tr><tr style="height: 39px"><th id="1029108189R2" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">3</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #4f6585; color: #c7c7c7; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Aluminum</span></td><td class="s7" dir="ltr">3</td><td class="s8" dir="ltr">4</td><td class="s9" dir="ltr"></td><td class="s10" dir="ltr">7</td><td class="s11" dir="ltr">$70,000.00</td></tr><tr style="height: 39px"><th id="1029108189R3" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">4</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #473822; color: #ffe5a0; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Carbon</span></td><td class="s7" dir="ltr">3</td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr">7</td><td class="s10" dir="ltr">10</td><td class="s11" dir="ltr">$50,000.00</td></tr><tr style="height: 39px"><th id="1029108189R4" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">5</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #ad9a7f; color: #25271c; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Corundum</span></td><td class="s7" dir="ltr"></td><td class="s8" dir="ltr">6</td><td class="s9" dir="ltr">12</td><td class="s10" dir="ltr">18</td><td class="s11" dir="ltr">$90,000.00</td></tr><tr style="height: 39px"><th id="1029108189R5" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">6</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #bfe1f6; color: #0a53a8; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Ice</span></td><td class="s7" dir="ltr"></td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr"></td><td class="s10" dir="ltr">0</td><td class="s11" dir="ltr"></td></tr><tr style="height: 39px"><th id="1029108189R6" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">7</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #b10202; color: #ffcfc9; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Quartz</span></td><td class="s7" dir="ltr">6</td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr">5</td><td class="s10" dir="ltr">11</td><td class="s11" dir="ltr"></td></tr><tr style="height: 39px"><th id="1029108189R7" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">8</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #ffe5a0; color: #473821; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Proc Food</span></td><td class="s7" dir="ltr"></td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr"></td><td class="s10" dir="ltr">0</td><td class="s11" dir="ltr"></td></tr><tr style="height: 39px"><th id="1029108189R8" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">9</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #e6e6e6; color: #3d3d3d; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Silicon</span></td><td class="s7" dir="ltr"></td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr">4</td><td class="s10">4</td><td class="s11" dir="ltr">$72,000.00</td></tr><tr style="height: 39px"><th id="1029108189R9" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">10</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #ffc8aa; color: #753800; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Stims</span></td><td class="s7" dir="ltr">7</td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr"></td><td class="s10" dir="ltr">7</td><td class="s11" dir="ltr">$1,000.00</td></tr><tr style="height: 39px"><th id="1029108189R10" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">11</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #3d3d3d; color: #e5e5e5; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Titanium</span></td><td class="s7" dir="ltr"></td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr"></td><td class="s10" dir="ltr">0</td><td class="s11" dir="ltr"></td></tr><tr style="height: 39px"><th id="1029108189R11" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">12</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #e6cff2; color: #5a3286; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Tin</span></td><td class="s7" dir="ltr"></td><td class="s8" dir="ltr">5</td><td class="s9" dir="ltr"></td><td class="s10" dir="ltr">5</td><td class="s11" dir="ltr">$40,000.00</td></tr><tr style="height: 39px"><th id="1029108189R12" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">13</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #0a53a8; color: #bfe0f6; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Tungsten</span></td><td class="s7" dir="ltr"></td><td class="s8" dir="ltr"></td><td class="s9" dir="ltr"></td><td class="s10" dir="ltr">0</td><td class="s11" dir="ltr"></td></tr><tr style="height: 39px"><th id="1029108189R13" style="height: 39px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 39px">14</div></th><td class="s5" dir="ltr"><span class="s6" style="background-color: #79a02e; color: #000000; width: 196.0px; max-width: 196.0px; margin-left: 6.0px;  padding: 1.0px 5.0px 1.0px 5.0px ; ">Waste</span></td><td class="s12" dir="ltr"></td><td class="s13" dir="ltr"></td><td class="s14" dir="ltr">4</td><td class="s10" dir="ltr">4</td><td class="s11" dir="ltr">$10,000.00</td></tr><tr style="height: 50px"><th id="1029108189R22" style="height: 50px;" class="row-headers-background"><div class="row-header-wrapper" style="line-height: 50px">23</div></th><td class="s15" dir="ltr"></td><td class="s16">19</td><td class="s16">15</td><td class="s16">32</td><td class="s17">66</td><td class="s18">$333,000.00</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-  </body>
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
