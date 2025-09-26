@@ -16,9 +16,22 @@
   <!-- Table styles from your upload -->
   <link type="text/css" rel="stylesheet" href="resources/sheet.css">
   <style>
-    html, body, .hero-bg, .hero-content, .hero-content .container {
-      padding-bottom: 0 !important;
-      margin-bottom: 0 !important;
+    html, body {
+      font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar.bg-dark {
+      background-color: rgba(34, 34, 34, 0.3) !important;
+      backdrop-filter: blur(4px);
+    }
+    .hero-bg {
+      background: url('https://dto9r5vaiz7bu.cloudfront.net/0sjc0nktzaamo/source.jpg') center center/cover no-repeat;
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
     }
     .hero-btn-transparent {
       background: transparent !important;
@@ -26,76 +39,17 @@
       color: #ff2222 !important;
       box-shadow: none !important;
       transition: background 0.2s, color 0.2s, border-color 0.2s;
+      font-size: 1.25rem;
+      padding: 0.75rem 2rem;
+      margin-bottom: 0.5rem;
     }
     .hero-btn-transparent:hover, .hero-btn-transparent:focus {
       background: rgba(255,255,255,0.15) !important;
       color: #ff2222 !important;
       border-color: #ff2222 !important;
     }
-    .hero-content, .hero-content .container {
-      /* ...existing code... */
-      padding-bottom: 0 !important;
-      margin-bottom: 0 !important;
-    }
-    .hero-bg {
-      /* ...existing code... */
-      padding-bottom: 0 !important;
-      margin-bottom: 0 !important;
-    }
-    .hero-content, .hero-content .container {
-      width: 100vw;
-      height: 100vh;
-      padding: 0 !important;
-      margin: 0 !important;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .hero-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-    }
-    body {
-      padding-top: 0 !important;
-    }
-    html, body, .container, main, footer {
-      border-bottom: none !important;
-    }
-    .navbar.bg-dark {
-      background-color: rgba(34, 34, 34, 0.3) !important;
-      backdrop-filter: blur(4px);
-    }
-    .hero-bg {
-      background: url('https://dto9r5vaiz7bu.cloudfront.net/0sjc0nktzaamo/source.jpg') center center/cover no-repeat fixed;
-      min-height: 100vh;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
     .ritz .waffle { width: 100%; max-width: 100%; }
     .table-wrapper { overflow-x: auto; }
-    html, body, * {
-      height: auto !important;
-      min-height: 100%;
-      overflow-x: auto !important;
-      overflow-y: auto !important;
-      font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
-    }
-    *::before, *::after {
-      font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
-    }
   </style>
 </head>
 
