@@ -1,0 +1,110 @@
+/* Table-specific styles for Handsontable (moved out of custom.css)
+   This file contains all styles that only affect the table page.
+*/
+
+/* Handsontable overall look */
+.handsontable, .handsontable td, .handsontable th, .ht_master, .htCore {
+  background-color: #222 !important;
+  color: #f3f3f3 !important;
+  font-size: 1.08em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Handsontable container */
+#hot-container {
+  margin: 0px;
+  padding: 0px;
+  position: relative;
+  width: 100%;
+  min-height: 50vh;
+  max-height: 900px;
+  height: min(70vh, 900px);
+  overflow: auto;
+}
+
+/* Fixed toolbar for Handsontable controls just below the fixed navbar */
+#hot-toolbar {
+  position: fixed;
+  top: 50px; /* height of the fixed navbar */
+  left: 0;
+  right: 0;
+  z-index: 1040; /* above content but below modal/backdrops */
+  display: flex;
+  justify-content: center;
+  padding: 0.4rem 1rem;
+  pointer-events: none; /* allow inner buttons to receive pointer events */
+}
+#hot-toolbar .hot-toolbar-inner {
+  pointer-events: auto;
+  background: rgba(20,20,20,0.6);
+  border-radius: 6px;
+  padding: 0.35rem 0.6rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+
+/* Hide header dropdown arrows/indicators inside the Handsontable header clone for the main table */
+#hot-container .ht_clone_top .ht__dropdown,
+#hot-container .ht_clone_top .htDropdown,
+#hot-container .ht_clone_top .htDropdownMenu,
+#hot-container .ht_clone_top .dropdown-toggle,
+#hot-container .ht_clone_top .caret,
+#hot-container .ht_clone_top button[role="button"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Fallback: hide any small pseudo-element arrows inside header cells */
+#hot-container .ht_clone_top thead th::after,
+#hot-container .ht_clone_top thead th > span::after {
+  display: none !important;
+}
+
+/* Aggressive fallback: hide any button, svg or icon elements inside the header clone */
+#hot-container .ht_clone_top th button,
+#hot-container .ht_clone_top th svg,
+#hot-container .ht_clone_top th .icon,
+#hot-container .ht_clone_top th .ht__dropdown,
+#hot-container .ht_clone_top th .htDropdown,
+#hot-container .ht_clone_top th .caret {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Active toggle styles */
+.hot-toggle-active {
+  background-color: #28a745 !important; /* Bootstrap success green */
+  color: #fff !important;
+  border-color: #28a745 !important;
+}
+.hot-toggle-icon {
+  display: inline-block;
+  margin-right: 0.35rem;
+  font-size: 0.95em;
+  vertical-align: text-bottom;
+}
+
+/* Small toast for sighted users when toggles happen */
+#hot-toast {
+  position: fixed;
+  top: calc(50px + 3.6rem); /* below navbar + toolbar */
+  right: 1rem;
+  z-index: 1060;
+  pointer-events: none;
+}
+#hot-toast .hot-toast-inner {
+  background: rgba(40,40,40,0.95);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 220ms ease, transform 220ms ease;
+  pointer-events: auto;
+}
+#hot-toast .hot-toast-inner.show {
+  opacity: 1;
+  transform: translateY(0);
+}

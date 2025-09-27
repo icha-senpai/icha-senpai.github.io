@@ -14,29 +14,7 @@
   color: #ff2222 !important;
   text-shadow: 0 1px 4px rgba(0,0,0,0.7);
 }
-/* Make navbar text more readable */
-.navbar .navbar-nav .nav-link {
-  color: #fff !important;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
-  font-weight: 700;
-}
-.navbar .navbar-nav .nav-link.active {
-  color: #ff2222 !important;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
-}
-/* Transparent navbar for immediate effect on about page */
-.navbar.bg-dark {
-  background-color: rgba(34, 34, 34, 0.3) !important;
-  backdrop-filter: blur(4px);
-  background: transparent !important;
-}
-/* Transparent navbar for immediate effect on commodity-table page */
-.navbar.bg-dark {
-  background-color: rgba(34, 34, 34, 0.3) !important;
-  backdrop-filter: blur(4px);
-  background: transparent !important;
-}
-/* Transparent navbar and hero styles for immediate effect */
+/* Slightly transparent navbar with blur to improve contrast while keeping background visible */
 .navbar.bg-dark {
   background-color: rgba(34, 34, 34, 0.3) !important;
   backdrop-filter: blur(4px);
@@ -55,7 +33,11 @@
   padding: 0px;
   position: relative;
   width: 100%;
-  height: 600px;
+  /* Make the table area responsive: use viewport height but cap for very large screens */
+  min-height: 50vh;
+  max-height: 900px;
+  height: min(70vh, 900px);
+  overflow: auto;
 }
 /* Transparent Back to Home button style */
 .btn-back-transparent {
@@ -94,12 +76,12 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
-/* Improve table readability */
-.handsontable, .handsontable td, .handsontable th, .ht_master, .htCore {
-  background-color: #222 !important;
-  color: #f3f3f3 !important;
-  font-size: 1.08em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+.visually-hidden { /* simple helper in case bootstrap isn't available */
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }
 
 

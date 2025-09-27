@@ -59,6 +59,14 @@
       </div>
     </div>
   </nav>
+  <!-- Static toolbar for Handsontable controls (moved from JS) -->
+  <div id="hot-toolbar">
+    <div class="hot-toolbar-inner">
+      <button id="toggle-ef" class="btn btn-warning btn-sm me-2" aria-pressed="false">Toggle Extra Stops</button>
+      <button id="toggle-extra-rows" class="btn btn-info btn-sm me-2" aria-pressed="false">Toggle Extra Rows</button>
+      <span id="hot-aria-live" class="visually-hidden" aria-live="polite" aria-atomic="true"></span>
+    </div>
+  </div>
   <div class="container py-5">
     <h2 class="mb-4" style="color: #fff;">Multi Contract Cargo Tracker</h2>
     <div class="hot-responsive-wrapper">
@@ -157,6 +165,10 @@
           if (row === 0 && (col === 0 || col === 6 || col === 7)) {
             cellProperties.readOnly = true;
           }
+          // Make entire Column G (index 6) read-only for all rows
+          if (col === 6) {
+            cellProperties.readOnly = true;
+          }
           // Format currency columns (H) for data rows
           if (col === 7 && isDataRow) {
             cellProperties.type = 'text';
@@ -206,6 +218,15 @@
   });
   // Expose Handsontable instance for external scripts (after initialization)
   container.handsontableInstance = hot;
+  // Notify other scripts that Handsontable is ready and the instance is attached
+  try {
+    document.dispatchEvent(new Event('hot-ready'));
+  } catch (e) {
+    // older browsers fallback
+    var evt = document.createEvent('Event');
+    evt.initEvent('hot-ready', true, true);
+    document.dispatchEvent(evt);
+  }
     });
   </script>
   <script src="commodity-table.js"></script>
