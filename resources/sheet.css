@@ -108,3 +108,81 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Handsontable scanability improvements: zebra rows and hover highlight */
+.handsontable .ht_master tbody tr td {
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.handsontable .ht_master tbody tr:nth-child(even) td {
+  background-color: rgba(255,255,255,0.02) !important;
+}
+.handsontable .ht_master tbody tr:hover td {
+  background-color: rgba(13,110,253,0.05) !important; /* subtle blue highlight */
+}
+
+/* Sticky header visual treatment (adds a hairline and faint shadow) */
+.ht_clone_top thead th {
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+.ht_clone_top thead th::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0; height: 1px;
+  background: rgba(255,255,255,0.03);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+}
+
+/* Totals row: bold, slightly shaded and separated */
+.handsontable .ht_master tr.htTotals td,
+.handsontable .ht_master tr:last-child td {
+  font-weight: 700 !important;
+  background-color: rgba(255,255,255,0.03) !important;
+  border-top: 2px solid rgba(255,255,255,0.04) !important;
+}
+
+/* Compact density toggle class for the table (applied to the .handsontable container) */
+.handsontable.hot-compact .ht_master td {
+  padding: 4px 8px !important;
+  height: 30px !important;
+}
+
+/* Slightly enlarge header font for clarity */
+.handsontable .ht_clone_top th {
+  font-size: 1.02em;
+  font-weight: 700;
+}
+
+/* Responsive: on small screens the toolbar should flow in the document
+   instead of being fixed so it doesn't overlap the navbar toggle (hamburger). */
+@media (max-width: 767.98px) {
+  #hot-toolbar {
+    position: static; /* allow toolbar to take its place in the flow */
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    display: block;
+    box-shadow: none;
+    background: transparent;
+    pointer-events: auto; /* allow whole toolbar to be interactive on mobile */
+  }
+  #hot-toolbar .hot-toolbar-inner {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: center;
+    background: rgba(20,20,20,0.6);
+    padding: 0.45rem;
+  }
+  /* Move toast to bottom-right on small screens to avoid covering the navbar */
+  #hot-toast {
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+  }
+}

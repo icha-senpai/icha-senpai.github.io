@@ -84,4 +84,38 @@ h1, h2, h3, h4, h5, h6 {
   white-space: nowrap;
 }
 
+/* Base typography and layout tweaks (readability) */
+:root {
+  font-size: 16px; /* sensible base for rem scaling */
+  --site-accent: #000000; /* bootstrap blue, used for focus rings */
+}
+
+body {
+  font-family: "Comic Neue", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.55;
+  font-size: 1rem; /* 16px from root */
+}
+
+/* Constrain wide content for easier reading on large screens */
+.container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  text-align: center;
+}
+
+/* Visible focus outlines for keyboard users */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+  outline: 3px solid rgba(13,110,253,0.18);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Prefer :focus-visible when available to avoid showing outlines on mouse click */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
 
