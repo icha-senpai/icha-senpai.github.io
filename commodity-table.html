@@ -58,6 +58,12 @@
       font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
     }
 
+    /* Mobile-specific: reinforce dark zebra striping on small viewports to avoid white rows */
+    @media (max-width: 767.98px) {
+      .handsontable .ht_master tbody tr td { background-color: #181818 !important; }
+      .handsontable .ht_master tbody tr:nth-child(even) td { background-color: rgba(255,255,255,0.02) !important; }
+    }
+
   </style>
 </head>
 <body class="fouc-hidden">
