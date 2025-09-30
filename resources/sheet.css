@@ -76,3 +76,36 @@
   background-color: transparent !important;
 }
 
+/* Final safety net: force dark background & light text for any element inside Handsontable.
+   This covers clone layers, TR/TD/TH with inline styles, and nested wrappers that some
+   renderers or browsers (WebKit/Firefox on iOS) may use. It's intentionally aggressive
+   because the user requested a minimal neutral look without zebra striping. */
+.handsontable *,
+.handsontable tbody tr,
+.handsontable thead tr,
+.handsontable tbody tr td,
+.handsontable tbody tr th,
+.handsontable thead tr th,
+.handsontable thead th,
+.handsontable td,
+.handsontable th,
+.handsontable tr[style],
+.handsontable td[style],
+.handsontable th[style],
+.handsontable .ht_clone_top *,
+.handsontable .ht_clone_left *,
+.handsontable .ht_clone_corner *,
+.handsontable .ht_clone_bottom * {
+  background-image: none !important;
+  background-color: var(--hot-bg) !important;
+  color: var(--hot-fg) !important;
+}
+
+/* Ensure any inline background set with !important by JS is overridden where possible
+   by forcing background on the element and inner wrappers. This may be the last resort
+   to prevent white rows on problematic mobile browsers. */
+.handsontable [style*="background"] {
+  background-image: none !important;
+  background-color: var(--hot-bg) !important;
+}
+

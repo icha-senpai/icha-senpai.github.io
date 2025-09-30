@@ -58,16 +58,7 @@
       font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
     }
 
-    /* Mobile-specific: reinforce dark zebra striping on small viewports to avoid white rows */
-    @media (max-width: 767.98px) {
-      .handsontable .ht_master tbody tr td { background-color: #181818 !important; }
-      /* Stronger dark zebra to ensure visibility on iOS/Firefox */
-      .handsontable .ht_master tbody tr:nth-child(even) td,
-      .handsontable .htCore tr:nth-child(even) td,
-      .handsontable .ht_clone_top tbody tr:nth-child(even) td { background-color: rgba(0,0,0,0.04) !important; }
-      /* Neutralize any inline backgrounds Handsontable might add */
-      .handsontable td[style] { background-image: none !important; background-color: inherit !important; }
-    }
+    /* Mobile-specific overrides removed. Table styling is centralized in resources/sheet.css */
 
   </style>
 </head>
