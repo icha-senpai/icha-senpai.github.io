@@ -120,8 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
         cellProperties.type = 'text';
         cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
           Handsontable.renderers.TextRenderer.apply(this, arguments);
-          td.style.color = '#007bff';
-          td.style.fontWeight = 'bold';
           // For empty or non-numeric values, leave the cell as-is
           var num = Number(value);
           if (!isNaN(num) && value !== null && value !== '') {
@@ -207,35 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   container.handsontableInstance = hot;
-  // Remove inline background styles that Handsontable or renderers might inject
-  // (we only touch background properties so color/weight set for currency cells remain)
-  function cleanInlineBackgrounds() {
-    try {
-      // target all td elements inside main hot container and clone tables
-      const selector = '#hot-container td, #hot-container .ht_clone_top td, #hot-container .ht_clone_left td, #hot-container .ht_clone_corner td, #hot-container .ht_clone_bottom td';
-      const tds = document.querySelectorAll(selector);
-      for (let i = 0; i < tds.length; i++) {
-        const td = tds[i];
-        if (!td) continue;
-        // only clear background-related inline styles, leave color/fontWeight etc alone
-        if (td.style) {
-          td.style.background = '';
-          td.style.backgroundColor = '';
-          td.style.backgroundImage = '';
-        }
-      }
-    } catch (e) {
-      // swallow failures — this is a non-fatal visual fix
-    }
-  }
-  // Run once immediately to catch initial render
-  cleanInlineBackgrounds();
-  // Also run after every Handsontable render to keep clones in sync
-  try {
-    if (hot && typeof hot.addHook === 'function') {
-      hot.addHook('afterRender', cleanInlineBackgrounds);
-    }
-  } catch (e) {}
+  // No inline styling or background cleanup — styling is handled via CSS only.
   // Reveal the wrapper now that Handsontable is initialized to avoid FOUC
   try {
     var wrapper = document.querySelector('.hot-responsive-wrapper.hot-hidden-until-ready');

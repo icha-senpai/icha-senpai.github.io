@@ -1,20 +1,17 @@
-/* Table-specific styles for Handsontable (moved out of custom.css)
-   This file contains all styles that only affect the table page.
+/* Minimal neutral Handsontable styles
+   - Dark background
+   - Readable white text
+   - Subtle borders
+   - No zebra striping or special effects
 */
 
-/* Handsontable overall look */
-.handsontable, .handsontable td, .handsontable th, .ht_master, .htCore {
-  background-color: #222 !important;
-  color: #f3f3f3 !important;
-  font-size: 1.08em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+:root {
+  --hot-bg: #181818;
+  --hot-fg: #efefef;
+  --hot-border: #2d2d2d;
 }
 
-/* Handsontable container */
 #hot-container {
-  margin: 0px;
-  padding: 0px;
-  position: relative;
   width: 100%;
   min-height: 50vh;
   max-height: 900px;
@@ -22,194 +19,60 @@
   overflow: auto;
 }
 
-/* Fixed toolbar for Handsontable controls just below the fixed navbar */
-#hot-toolbar {
-  position: fixed;
-  top: 50px; /* height of the fixed navbar */
-  left: 0;
-  right: 0;
-  z-index: 1040; /* above content but below modal/backdrops */
-  display: flex;
-  justify-content: center;
-  padding: 0.4rem 1rem;
-  pointer-events: none; /* allow inner buttons to receive pointer events */
-}
-#hot-toolbar .hot-toolbar-inner {
-  pointer-events: auto;
-  background: rgba(20,20,20,0.6);
-  border-radius: 6px;
-  padding: 0.35rem 0.6rem;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+.handsontable, .handsontable td, .handsontable th, .ht_master, .htCore {
+  background-color: var(--hot-bg) !important;
+  color: var(--hot-fg) !important;
+  font-size: 1em;
 }
 
-/* Hide header dropdown arrows/indicators inside the Handsontable header clone for the main table */
-#hot-container .ht_clone_top .ht__dropdown,
-#hot-container .ht_clone_top .htDropdown,
-#hot-container .ht_clone_top .htDropdownMenu,
-#hot-container .ht_clone_top .dropdown-toggle,
-#hot-container .ht_clone_top .caret,
-#hot-container .ht_clone_top button[role="button"] {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+.handsontable td, .handsontable th {
+  border: 1px solid var(--hot-border) !important;
+  padding: 6px 8px !important;
 }
 
-/* Fallback: hide any small pseudo-element arrows inside header cells */
-#hot-container .ht_clone_top thead th::after,
-#hot-container .ht_clone_top thead th > span::after {
-  display: none !important;
-}
-
-/* Aggressive fallback: hide any button, svg or icon elements inside the header clone */
-#hot-container .ht_clone_top th button,
-#hot-container .ht_clone_top th svg,
-#hot-container .ht_clone_top th .icon,
-#hot-container .ht_clone_top th .ht__dropdown,
-#hot-container .ht_clone_top th .htDropdown,
-#hot-container .ht_clone_top th .caret {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-/* Active toggle styles */
-.hot-toggle-active {
-  background-color: #28a745 !important; /* Bootstrap success green */
-  color: #fff !important;
-  border-color: #28a745 !important;
-}
-.hot-toggle-icon {
-  display: inline-block;
-  margin-right: 0.35rem;
-  font-size: 0.95em;
-  vertical-align: text-bottom;
-}
-
-/* Small toast for sighted users when toggles happen */
-#hot-toast {
-  position: fixed;
-  top: calc(50px + 3.6rem); /* below navbar + toolbar */
-  right: 1rem;
-  z-index: 1060;
-  pointer-events: none;
-}
-#hot-toast .hot-toast-inner {
-  background: rgba(40,40,40,0.95);
-  color: #fff;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity 220ms ease, transform 220ms ease;
-  pointer-events: auto;
-}
-#hot-toast .hot-toast-inner.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Handsontable scanability improvements: zebra rows and hover highlight */
-.handsontable .ht_master tbody tr td {
-  transition: background-color 160ms ease, color 160ms ease;
-}
-.handsontable .ht_master tbody tr:nth-child(even) td {
-  background-color: rgba(255,255,255,0.02) !important;
-}
-.handsontable .ht_master tbody tr:hover td {
-  background-color: rgba(13,110,253,0.05) !important; /* subtle blue highlight */
-}
-
-/* Sticky header visual treatment (adds a hairline and faint shadow) */
-.ht_clone_top thead th {
+.handsontable .ht_clone_top th {
+  background-color: var(--hot-bg) !important;
+  color: var(--hot-fg) !important;
   position: sticky;
   top: 0;
-  backdrop-filter: blur(4px);
   z-index: 2;
 }
-.ht_clone_top thead th::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: 0; height: 1px;
-  background: rgba(255,255,255,0.03);
-  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
-}
 
-/* Totals row: bold, slightly shaded and separated */
+/* Totals row: keep normal weight but visually separated with a top border */
 .handsontable .ht_master tr.htTotals td,
 .handsontable .ht_master tr:last-child td {
-  font-weight: 700 !important;
-  background-color: rgba(255,255,255,0.03) !important;
-  border-top: 2px solid rgba(255,255,255,0.04) !important;
+  border-top: 2px solid var(--hot-border) !important;
 }
 
-/* Compact density toggle class for the table (applied to the .handsontable container) */
-.handsontable.hot-compact .ht_master td {
-  padding: 4px 8px !important;
-  height: 30px !important;
+/* Toolbar: minimal, no shadows or blur */
+#hot-toolbar {
+  position: static;
+  width: 100%;
+  display: block;
+  padding: 0.35rem 0.5rem;
+}
+#hot-toolbar .hot-toolbar-inner {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 }
 
-/* Slightly enlarge header font for clarity */
-.handsontable .ht_clone_top th {
-  font-size: 1.02em;
-  font-weight: 700;
+/* Remove hover/zebra/special effects */
+.handsontable .ht_master tbody tr td {
+  background: transparent !important;
 }
 
-/* Responsive: on small screens the toolbar should flow in the document
-   instead of being fixed so it doesn't overlap the navbar toggle (hamburger). */
-@media (max-width: 767.98px) {
-  #hot-toolbar {
-    position: static; /* allow toolbar to take its place in the flow */
-    top: auto;
-    left: auto;
-    right: auto;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    display: block;
-    box-shadow: none;
-    background: transparent;
-    pointer-events: auto; /* allow whole toolbar to be interactive on mobile */
-  }
-  #hot-toolbar .hot-toolbar-inner {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    justify-content: center;
-    background: rgba(20,20,20,0.6);
-    padding: 0.45rem;
-  }
-  /* Move toast to bottom-right on small screens to avoid covering the navbar */
-  #hot-toast {
-    top: auto;
-    bottom: 1rem;
-    right: 1rem;
-  }
-  /* Ensure zebra striping stays dark on small screens (mobile browsers may render differently) */
-  /* Target all core/clone table cells and override any inline background styles Handsontable may add. */
-  .handsontable .ht_master tbody tr td,
-  .handsontable .htCore td,
-  .handsontable .ht_clone_top tbody tr td,
-  .handsontable .ht_clone_left tbody tr td,
-  .handsontable .ht_clone_corner tbody tr td,
-  .handsontable .ht_clone_bottom tbody tr td {
-    background-image: none !important;
-    background-color: #181818 !important; /* ensure base cells are dark */
-  }
-
-  /* Stronger, slightly darker zebra for mobile so it's visible on iOS/WebKit-based browsers */
-  .handsontable .ht_master tbody tr:nth-child(even) td,
-  .handsontable .htCore tr:nth-child(even) td,
-  .handsontable .ht_clone_top tbody tr:nth-child(even) td,
-  .handsontable .ht_clone_left tbody tr:nth-child(even) td,
-  .handsontable .ht_clone_corner tbody tr:nth-child(even) td,
-  .handsontable .ht_clone_bottom tbody tr:nth-child(even) td {
-    background-color: rgba(0,0,0,0.04) !important; /* subtle dark overlay for even rows */
-  }
-
-  /* If Handsontable injects inline styles on TD elements, this will neutralize their background declarations. */
-  .handsontable td[style] {
-    background-image: none !important;
-    background-color: inherit !important;
-  }
+/* Also ensure Handsontable clone layers don't show different backgrounds */
+.handsontable .ht_clone_top tbody tr td,
+.handsontable .ht_clone_left tbody tr td,
+.handsontable .ht_clone_corner tbody tr td,
+.handsontable .ht_clone_bottom tbody tr td {
+  background: transparent !important;
 }
+
+/* Neutralize any inline background declarations Handsontable or renderers may add */
+.handsontable td[style] {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
