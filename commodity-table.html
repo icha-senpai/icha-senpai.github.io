@@ -12,11 +12,12 @@
   <link href="css/custom.css" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="resources/sheet.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hyperformula@2.6.0/dist/hyperformula.full.min.js"></script>
+  <!-- DOMPurify/Handsontable/HyperFormula scripts moved to the end of the body to avoid layout blocking -->
   <style>
     html, body {
-      background: url('https://dto9r5vaiz7bu.cloudfront.net/hmqh11zt822qr/source.jpg') center center/cover no-repeat fixed !important;
+      /* Avoid background-attachment: fixed (scroll-linked) which can cause jank on some browsers.
+         Use the default scrolling background to improve async panning performance. */
+      background: url('https://dto9r5vaiz7bu.cloudfront.net/hmqh11zt822qr/source.jpg') center center/cover no-repeat !important;
       min-height: 100vh;
       height: auto !important;
       min-height: 100%;
@@ -39,7 +40,7 @@
 
   </style>
 </head>
-<body>
+<body class="fouc-hidden">
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
@@ -52,7 +53,7 @@
         <ul class="navbar-nav d-flex justify-content-center w-100">
           <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
           <li class="nav-item"><a class="nav-link active" href="commodity-table.html">Multi Contract Cargo Tracker</a></li>
-          <li class="nav-item"><a class="nav-link" href="http://www.twitch.tv/ichatv" target="_blank">Twitch</a></li>
+          <li class="nav-item"><a class="nav-link" href="twitch.html">Twitch</a></li>
           <li class="nav-item"><a class="nav-link" href="https://github.com/icha-senpai/" target="_blank">GitHub</a></li>
           <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
         </ul>
@@ -69,170 +70,38 @@
   </div>
   <div class="container py-5">
     <h2 class="mb-4" style="color: #fff;">Multi Contract Cargo Tracker</h2>
-    <div class="hot-responsive-wrapper">
+    <div class="hot-responsive-wrapper hot-hidden-until-ready">
       <div id="hot-container"></div>
     </div>
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Define the header row
-      const hotHeader = ['Commodity', 'Dropoff 1', 'Dropoff 2', 'Dropoff 3', 'Dropoff 4', 'Dropoff 5', 'SCU Total', 'Contract Payout', 'Contract Payout (num)'];
-      // Define the commodity names for the first 13 rows
-      const commodityNames = [
-        'Aluminum', 'Carbon', 'Corundum', 'Ice', 'Quartz', 'Proc Food', 'Silicon', 'Stims', 'Titanium', 'Tin', 'Tungsten', 'Waste', ''
-      ];
-      // Generate rows 2-14 (1-based, 0-based index 1-13) with commodity names and formulas
-      const hotRows = commodityNames.map((name, i) => {
-        const rowNum = i + 2; // Excel-style row number
-        return [name, '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
-      });
-      // Generate rows 15-123 (0-based index 14-122) as blank with formula in G
-      const extraRows = Array.from({length: 109}, (_, i) => {
-        const rowNum = 15 + i;
-        return ['', '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
-      });
-      // Totals row (row 124, 0-based index 123)
-      const totalsRow = [
-        'Totals',
-        '=SUM(B2:B123)',
-        '=SUM(C2:C123)',
-        '=SUM(D2:D123)',
-        '=SUM(E2:E123)',
-        '=SUM(F2:F123)',
-        '=SUM(G2:G123)',
-        '=SUM(H2:H123)',
-        '=SUM(I2:I123)',
-        '=SUM(I2:I123)'
-      ];
-      // Combine all rows
-      const hotData = [hotHeader, ...hotRows, ...extraRows, totalsRow];
-      const container = document.getElementById('hot-container');
-      const hot = new Handsontable(container, {
-        data: hotData,
-        rowHeaders: true,
-        colHeaders: true,
-        licenseKey: 'non-commercial-and-evaluation',
-        width: '100%',
-        height: 600,
-        stretchH: 'all',
-        hiddenColumns: {
-          columns: [4,5,8],
-          indicators: false
-        },
-        hiddenRows: {
-          rows: Array.from({length: 109}, (_, i) => i + 14),
-          indicators: false
-        },
-        manualColumnResize: true,
-        manualRowResize: true,
-        filters: true,
-        dropdownMenu: true,
-        contextMenu: true,
-        readOnly: false,
-        comments: true,
-        cells: function(row, col) {
-          const cellProperties = {};
-          // Commodity dropdown for all rows 1-122 (2-123 Excel), col 0
-          const isDataRow = row > 0 && row < 123;
-          if (col === 0 && isDataRow) {
-            cellProperties.editor = 'select';
-            cellProperties.selectOptions = [
-              'AcryliPlex Composite', 'Audio Visual Equipment', 'Bioplastic', 'Carbon-Silk', 'Construction Materials',
-              'Diamond Laminate', 'DynaFlex', 'Kopion Horn', 'Luminalia Gift Box', 'Marok Gem', 'Neograph', 'Omnapoxy',
-              'Party Favors', 'Red Festival Envelope', 'Ship Ammunition', 'Souvenirs', 'Thermalfoam', 'Year of the Dog Envelope',
-              'Year of the Monkey Envelope', 'Year of the Pig', 'Year of the Ram Envelope', 'Year of the Rooster Envelope',
-              'Agricium', 'Agricium Ore', 'Aluminum', 'Aluminum Ore', 'Borase', 'Borase Ore', 'Carbon', 'Cobalt', 'Copper',
-              'Copper Ore', 'Gold', 'Gold Ore', 'Iron', 'Iron Ore', 'Mercury', 'Riccite', 'Silicon', 'Stileron', 'Tin',
-              'Titanium', 'Titanium Ore', 'Tungsten', 'Tungsten Ore', "Xa' Pyen", 'Agricultural Supplies', 'DCSR2',
-              'Ranta Dung', 'Altruciatoxin', 'Distilled Spirits', "E'tam", 'Gasping Weevil Eggs', 'Maze', 'Neon',
-              'Osoian Hides', 'Revenant Tree Pollen', 'SLAM', 'Stims', 'WiDow', 'Amioshi Plague', 'Degnous Root',
-              'Golden Medmons', 'Heart of the Woods', 'Jumping Limes', 'Pitambu', 'Prota', 'Revenant Pods', 'Sunset Berries',
-              'Ammonia', 'Argon', 'Astatine', 'Chlorine', 'Fluorine', 'Helium', 'Hydrogen', 'Iodine', 'Methane', 'Nitrogen',
-              'Partillium', 'Pressurized Ice', 'Aphorite', 'Beryl', 'Beryl Raw', 'Bexalite', 'Bexalite Raw', 'Corundum',
-              'Corundum Raw', 'Diamond', 'Diamond Raw', 'Dolivine', 'Hadanite', 'Hephaestanite', 'Hephaestanite Raw',
-              'Janalite', 'Laranite', 'Laranite Raw', 'Potassium', 'Quantainium', 'Quantainium Raw', 'Quartz', 'Quartz Raw',
-              'Taranite', 'Taranite Raw', 'Atlasium', 'Beradom', 'Dymantium', 'Feynmaline', 'Glacosite', 'Steel', 'Compboard',
-              'Scrap', 'Fresh Food', 'Human Food Bars', 'Processed Food', 'Inert Materials', 'Medical Supplies',
-              'Recycled Material Composite', 'Waste', 'Other', 'Custom'
-            ];
-          }
-          // Make the totals row (row 123) bold and read-only
-          if (row === 123) {
-            cellProperties.className = 'htBold';
-            cellProperties.readOnly = true;
-          }
-          // Make A1, G1, and H1 read-only (row 0, col 0, 6, 7)
-          if (row === 0 && (col === 0 || col === 6 || col === 7)) {
-            cellProperties.readOnly = true;
-          }
-          // Make entire Column G (index 6) read-only for all rows
-          if (col === 6) {
-            cellProperties.readOnly = true;
-          }
-          // Format currency columns (H) for data rows
-          if (col === 7 && isDataRow) {
-            cellProperties.type = 'text';
-            cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
-              Handsontable.renderers.TextRenderer.apply(this, arguments);
-              td.style.color = '#007bff';
-              td.style.fontWeight = 'bold';
-              if (!isNaN(value) && value !== null && value !== '') {
-                td.textContent = '$' + Number(value).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-              }
-            };
-          }
-          // Hide helper column I from styling
-          if (col === 8) {
-            cellProperties.readOnly = true;
-          }
-          return cellProperties;
-        },
-        dropdownMenu: [
-          'filter_by_condition', 'filter_by_value', 'filter_action_bar',
-          'freeze_column', 'freeze_row', 'remove_row', 'remove_col',
-          'row_above', 'row_below', 'col_left', 'col_right',
-          'clear_column', 'clear_custom_sort', 'undo', 'redo',
-          'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
-          'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
-        ],
-        contextMenu: [
-          'row_above', 'row_below', 'col_left', 'col_right',
-          'remove_row', 'remove_col', 'undo', 'redo',
-          'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
-          'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
-        ],
-        /* Keep header visible and pin the totals row at the bottom */
-        fixedRowsTop: 1,
-        fixedRowsBottom: 1,
-        formulas: {
-          engine: HyperFormula
-        },
-        allowInsertRow: true,
-        allowInsertColumn: true,
-        allowRemoveRow: true,
-        allowRemoveColumn: true,
-        manualColumnFreeze: true,
-        manualRowMove: true,
-        manualColumnMove: true,
-        autoColumnSize: true,
-        autoRowSize: true,
-        multiColumnSorting: true,
-        multiRowSorting: true
-  });
-  // Expose Handsontable instance for external scripts (after initialization)
-  container.handsontableInstance = hot;
-  // Notify other scripts that Handsontable is ready and the instance is attached
-  try {
-    document.dispatchEvent(new Event('hot-ready'));
-  } catch (e) {
-    // older browsers fallback
-    var evt = document.createEvent('Event');
-    evt.initEvent('hot-ready', true, true);
-    document.dispatchEvent(evt);
-  }
-    });
-  </script>
+  <style>
+    /* Hide the Handsontable wrapper until JS initialization completes to avoid FOUC.
+       Use opacity-based transition so the element keeps its layout while fading in. */
+    .hot-responsive-wrapper {
+      opacity: 1;
+      transition: opacity 220ms ease-in-out;
+    }
+    .hot-responsive-wrapper.hot-hidden-until-ready {
+      opacity: 0;
+      visibility: hidden; /* keep hidden until JS removes the class */
+      pointer-events: none; /* avoid accidental interactions while hidden */
+    }
+    /* Global FOUC prevention: hide the body until critical assets & JS are ready. */
+    body.fouc-hidden {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      transition: opacity 220ms ease-in-out;
+    }
+    body { transition: opacity 220ms ease-in-out; }
+  </style>
+  <!-- Initialization script moved to external file (commodity-init.js) and will be loaded after libraries. -->
   <script src="commodity-table.js"></script>
+  <!-- Load DOMPurify, Handsontable and HyperFormula after CSS/DOM to avoid blocking layout -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hyperformula@2.6.0/dist/hyperformula.full.min.js"></script>
+  <!-- Page-specific initialization (runs after libraries are available). -->
+  <script src="commodity-init.js"></script>
   <!-- Bootstrap JS (for navbar toggler) -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" crossorigin="anonymous" defer></script>

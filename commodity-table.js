@@ -5,15 +5,35 @@
 function initHotToolbar() {
   var container = document.getElementById('hot-container');
   if (!container) {
-    console.warn('commodity-table.js: #hot-container not found; toolbar will not be initialized');
     return;
   }
   var hot = container.handsontableInstance;
   if (!hot) {
-    console.warn('commodity-table.js: initHotToolbar called but hot instance not attached yet');
+    // If the Handsontable instance isn't attached yet, wait for the explicit
+    // 'hot-ready' event dispatched by the initializer instead of warning and
+    // bailing immediately. This avoids a race where this script runs before
+    // the table has finished creating and attaching itself to the container.
+    if (!initHotToolbar._waiting) {
+      initHotToolbar._waiting = true;
+      var onHotReady = function() {
+        initHotToolbar._waiting = false;
+        try { initHotToolbar(); } catch (e) { console.error('commodity-table.js: error re-initializing toolbar after hot-ready', e); }
+        document.removeEventListener('hot-ready', onHotReady);
+      };
+      document.addEventListener('hot-ready', onHotReady);
+      // Short fallback: if instance still missing after 1s, log an informational message
+      setTimeout(function() {
+        if (!container.handsontableInstance) {
+          // still waiting for Handsontable instance; will initialize when hot-ready fires.
+        } else {
+          // if it attached synchronously in the meantime, try init immediately
+          try { initHotToolbar(); } catch (e) { console.error('commodity-table.js: error initializing toolbar after instance attached', e); }
+        }
+      }, 1000);
+    }
     return;
   }
-  console.log('commodity-table.js: Handsontable instance found — initializing toolbar');
+  // Handsontable instance found — initializing toolbar
 
       // Prefer the static toolbar if present in the HTML; otherwise create it dynamically
       var toolbar = document.getElementById('hot-toolbar');
