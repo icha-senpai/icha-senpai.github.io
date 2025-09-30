@@ -1,0 +1,12 @@
+{
+  "name": "icha-senpai-static-tools",
+  "version": "1.0.0",
+  "description": "Tooling for optimizing site images (generates WebP/AVIF and responsive sizes).",
+  "private": true,
+  "scripts": {
+    "optimize-images": "node scripts/optimize-images.js"
+  },
+  "dependencies": {
+    "sharp": "^0.32.0"
+  }
+}

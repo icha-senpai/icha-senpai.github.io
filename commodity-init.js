@@ -112,19 +112,27 @@ document.addEventListener('DOMContentLoaded', function() {
           if (value === '') td.textContent = NONE_LABEL;
         };
       }
-      if (row === 123) { cellProperties.className = 'htBold'; cellProperties.readOnly = true; }
+  if (row === 123) { cellProperties.className = 'htBold'; cellProperties.readOnly = true; }
       if (row === 0 && (col === 0 || col === 6 || col === 7)) { cellProperties.readOnly = true; }
       if (col === 6) { cellProperties.readOnly = true; }
-      if (col === 7 && isDataRow) {
+      if (col === 7) {
+        // Render contract payout cells as currency. Apply to data rows and totals row.
         cellProperties.type = 'text';
         cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
           Handsontable.renderers.TextRenderer.apply(this, arguments);
           td.style.color = '#007bff';
           td.style.fontWeight = 'bold';
-          if (!isNaN(value) && value !== null && value !== '') {
-            td.textContent = '$' + Number(value).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          // For empty or non-numeric values, leave the cell as-is
+          var num = Number(value);
+          if (!isNaN(num) && value !== null && value !== '') {
+            // Ensure two decimal places and locale formatting
+            td.textContent = '$' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
           }
         };
+        // Ensure totals row (row 123) remains read-only (redundant but explicit)
+        if (row === 123) {
+          cellProperties.readOnly = true;
+        }
       }
       if (col === 8) { cellProperties.readOnly = true; }
       return cellProperties;

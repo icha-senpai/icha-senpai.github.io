@@ -10,6 +10,13 @@
   <title>Commodity Table - Icha's Place</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="css/custom.css" rel="stylesheet">
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="shortcut icon" href="images/favicon.ico">
+  <meta name="theme-color" content="#ffffff">
   <link type="text/css" rel="stylesheet" href="resources/sheet.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.css">
   <!-- DOMPurify/Handsontable/HyperFormula scripts moved to the end of the body to avoid layout blocking -->
@@ -17,13 +24,26 @@
     html, body {
       /* Avoid background-attachment: fixed (scroll-linked) which can cause jank on some browsers.
          Use the default scrolling background to improve async panning performance. */
-      background: url('https://dto9r5vaiz7bu.cloudfront.net/hmqh11zt822qr/source.jpg') center center/cover no-repeat !important;
+  /* JPEG fallback */
+  background-image: url('images/commodity-bg.jpg') !important;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
       min-height: 100vh;
       height: auto !important;
       min-height: 100%;
       overflow-x: auto !important;
       overflow-y: auto !important;
       font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
+    }
+    @supports (background-image: image-set(url('/images/optimized/commodity-bg-1600.avif') type('image/avif'))) {
+      html, body {
+        background-image: image-set(
+          url('/images/optimized/commodity-bg-1600.avif') type('image/avif'),
+          url('/images/optimized/commodity-bg-1600.webp') type('image/webp'),
+          url('images/commodity-bg.jpg') type('image/jpeg')
+        ) !important;
+      }
     }
     /* ...existing code... */
     .handsontable, .handsontable td, .handsontable th, .ht_master, .htCore {

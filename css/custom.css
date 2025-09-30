@@ -14,6 +14,45 @@
   color: #ff2222 !important;
   text-shadow: 0 1px 4px rgba(0,0,0,0.7);
 }
+/* Standardize navbar height across the whole site */
+:root {
+  --site-navbar-height: 60px; /* change this value if you want a different height */
+}
+
+/* Navbar layout rules to ensure consistent height and vertical centering */
+.navbar {
+  height: var(--site-navbar-height);
+  min-height: var(--site-navbar-height);
+}
+.navbar .container {
+  height: 100%;
+}
+.navbar .navbar-collapse {
+  height: 100%;
+}
+.navbar .navbar-nav {
+  height: 100%;
+  align-items: center; /* vertical center nav items */
+}
+.navbar .nav-link {
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.navbar .navbar-toggler {
+  margin-top: 0;
+  margin-bottom: 0;
+  align-self: center;
+}
+.navbar .navbar-brand {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 /* Slightly transparent navbar with blur to improve contrast while keeping background visible */
 .navbar.bg-dark {
   background-color: rgba(34, 34, 34, 0.3) !important;
@@ -21,11 +60,27 @@
   background: transparent !important;
 }
 .hero-bg {
-  background: url('https://dto9r5vaiz7bu.cloudfront.net/0sjc0nktzaamo/source.jpg') center center/cover no-repeat;
+  /* JPEG fallback for older browsers */
+  background-image: url('../images/hero-bg.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   min-height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
+}
+
+/* Prefer newer formats (AVIF/WebP) when supported using image-set */
+@supports (background-image: image-set(url('/images/optimized/hero-bg-1600.avif') type('image/avif'))) {
+  .hero-bg {
+    background-image: image-set(
+      url('/images/optimized/hero-bg-1600.avif') type('image/avif'),
+      url('/images/optimized/hero-bg-1600.webp') type('image/webp'),
+      url('/images/hero-bg.jpg') type('image/jpeg')
+    );
+  }
 }
 /* Handsontable container styling moved from inline */
 #hot-container {
@@ -53,9 +108,9 @@
   border-color: #fff !important;
 }
 
-/* Move down content because we have a fixed navbar that is 50px tall */
+/* Move down content because we have a fixed navbar */
 body {
-  padding-top: 50px;
+  padding-top: var(--site-navbar-height);
   padding-bottom: 20px;
   background-color: #181818;
   color: #f3f3f3;
