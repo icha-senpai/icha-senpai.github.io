@@ -28,7 +28,7 @@
   height: 100%;
 }
 .navbar .navbar-collapse {
-  height: 100%;
+  height: auto; /* allow Bootstrap collapse to control visibility */
 }
 .navbar .navbar-nav {
   height: 100%;
@@ -46,6 +46,78 @@
   margin-bottom: 0;
   align-self: center;
 }
+
+/* Improve hamburger (navbar-toggler) appearance for contrast and accessibility */
+.navbar-toggler {
+  border: 1px solid rgba(255,255,255,0.12);
+  background-color: rgba(0,0,0,0.28);
+  padding: 0.25rem 0.45rem;
+  border-radius: 6px;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+}
+.navbar-toggler[aria-expanded="true"] {
+  background-color: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
+.navbar-toggler-icon {
+  /* Use a white three-line SVG so the icon is always visible over dark/complex backgrounds */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+}
+@media (max-width: 576px) {
+  .navbar-toggler { padding: 0.3rem 0.5rem; }
+}
+
+/* Make the collapsed (hamburger) menu visually match the desktop navbar
+   when opened on small screens. Ensures background, link colors, spacing
+   and alignment feel consistent. */
+@media (max-width: 991.98px) {
+  /* When the mobile menu is open, make it match the regular navbar:
+     semi-transparent with a subtle blur so the page shows through. */
+  .navbar .collapse.show {
+    /* Avoid absolute positioning so the collapse can be hidden normally. */
+    position: static;
+    width: 100%;
+    /* Use the same translucent background and blur as the navbar itself. */
+    background-color: rgba(34, 34, 34, 0.3) !important;
+    backdrop-filter: blur(4px);
+    padding: 0.75rem 0;
+  }
+
+  /* Stack nav items vertically and center them like the desktop centered nav */
+  .navbar .navbar-nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    width: 100%;
+  }
+
+  .navbar .nav-item {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar .nav-link {
+    color: #fff !important;
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    width: auto;
+    font-weight: 700;
+  }
+
+  /* Keep active link styling consistent */
+  .navbar .nav-link.active {
+    color: #ff2222 !important;
+    background: transparent;
+  }
+
+  /* Add a subtle divider between items for clarity on very small screens */
+  .navbar .nav-item + .nav-item { border-top: 1px solid rgba(255,255,255,0.03); }
+}
 .navbar .navbar-brand {
   height: 100%;
   display: flex;
@@ -55,9 +127,30 @@
 }
 /* Slightly transparent navbar with blur to improve contrast while keeping background visible */
 .navbar.bg-dark {
+  /* translucent dark background so the page shows through slightly, with a subtle blur */
   background-color: rgba(34, 34, 34, 0.3) !important;
   backdrop-filter: blur(4px);
-  background: transparent !important;
+}
+
+/* Ensure the fixed navbar remains above the toolbar and that the toolbar
+   does not overlap the hamburger/toggler on small screens. */
+.navbar.fixed-top {
+  z-index: 1100; /* higher than typical toolbar so toggler stays on top */
+}
+
+#hot-toolbar {
+  position: relative;
+  z-index: 1050; /* sit below the navbar but above page content */
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.hot-toolbar-inner {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 .hero-bg {
   /* JPEG fallback for older browsers */
