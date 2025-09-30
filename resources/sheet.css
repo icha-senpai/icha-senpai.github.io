@@ -186,10 +186,30 @@
     right: 1rem;
   }
   /* Ensure zebra striping stays dark on small screens (mobile browsers may render differently) */
-  .handsontable .ht_master tbody tr td {
+  /* Target all core/clone table cells and override any inline background styles Handsontable may add. */
+  .handsontable .ht_master tbody tr td,
+  .handsontable .htCore td,
+  .handsontable .ht_clone_top tbody tr td,
+  .handsontable .ht_clone_left tbody tr td,
+  .handsontable .ht_clone_corner tbody tr td,
+  .handsontable .ht_clone_bottom tbody tr td {
+    background-image: none !important;
     background-color: #181818 !important; /* ensure base cells are dark */
   }
-  .handsontable .ht_master tbody tr:nth-child(even) td {
-    background-color: rgba(255,255,255,0.02) !important; /* subtle light overlay for even rows */
+
+  /* Stronger, slightly darker zebra for mobile so it's visible on iOS/WebKit-based browsers */
+  .handsontable .ht_master tbody tr:nth-child(even) td,
+  .handsontable .htCore tr:nth-child(even) td,
+  .handsontable .ht_clone_top tbody tr:nth-child(even) td,
+  .handsontable .ht_clone_left tbody tr:nth-child(even) td,
+  .handsontable .ht_clone_corner tbody tr:nth-child(even) td,
+  .handsontable .ht_clone_bottom tbody tr:nth-child(even) td {
+    background-color: rgba(0,0,0,0.04) !important; /* subtle dark overlay for even rows */
+  }
+
+  /* If Handsontable injects inline styles on TD elements, this will neutralize their background declarations. */
+  .handsontable td[style] {
+    background-image: none !important;
+    background-color: inherit !important;
   }
 }
