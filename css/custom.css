@@ -206,18 +206,7 @@ html, body {
     -webkit-overflow-scrolling: touch;
   }
 
-  /* If the browser supports backdrop-filter, enable a transparent overlay and frosted blur
-     so the menu shows the blurred page content behind it. Browsers without support will
-     keep the semi-opaque RGBA background above for legibility. */
-  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    .navbar .collapse,
-    .navbar .collapsing,
-    .navbar .collapse.show {
-      background-color: transparent !important;
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
-    }
-  }
+  /* Keep the semi-opaque background for the mobile collapse (no feature-detect block) */
 
   /* Avoid Bootstrap height animation jumps when using fixed positioning */
   .navbar .collapsing {
