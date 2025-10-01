@@ -20,52 +20,8 @@
   <link type="text/css" rel="stylesheet" href="resources/sheet.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.css">
   <!-- DOMPurify/Handsontable/HyperFormula scripts moved to the end of the body to avoid layout blocking -->
-  <style>
-    html, body {
-      /* Use a fixed background that fills the viewport */
-  /* JPEG fallback */
-  background-image: url('images/commodity-bg.jpg') !important;
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-    min-height: 100vh;
-    /* force the html/body to match the viewport so the background covers the full screen */
-    height: 100vh;
-    min-height: 100%;
-      overflow-x: auto;
-      overflow-y: auto;
-      font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
-    }
-    @supports (background-image: image-set(url('/images/optimized/commodity-bg-1600.avif') type('image/avif'))) {
-      html, body {
-        background-image: image-set(
-          url('/images/optimized/commodity-bg-1600.avif') type('image/avif'),
-          url('/images/optimized/commodity-bg-1600.webp') type('image/webp'),
-          url('images/commodity-bg.jpg') type('image/jpeg')
-        ) !important;
-        background-position: center center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-      }
-    }
-    /* ...existing code... */
-    .handsontable, .handsontable td, .handsontable th, .ht_master, .htCore {
-      background-color: #181818 !important;
-      color: #fff !important;
-      border-color: #333 !important;
-    }
-    .handsontable, .handsontable td, .handsontable th {
-      font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
-    }
-    * {
-      font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
-    }
-
-    /* Mobile-specific overrides removed. Table styling is centralized in resources/sheet.css */
-
-  </style>
+</head>
+<body class="fouc-hidden page-commodity">
 </head>
 <body class="fouc-hidden">
   <!-- Navbar -->

@@ -17,6 +17,118 @@
 /* Standardize navbar height across the whole site */
 :root {
   --site-navbar-height: 60px; /* change this value if you want a different height */
+  /* Tuned system font stack for faster first paint. Comic Neue will still be loaded
+     via Google Fonts when available, but the system stack is used as the immediate fallback. */
+  --site-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+/* Per-page background helpers (centralized to avoid duplication in HTML) */
+/* Use body classes to select which background to apply: e.g. <body class="page-twitch"> */
+body.page-commodity {
+  background-image: url('/images/commodity-bg.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  height: 100vh;
+}
+@supports (background-image: image-set(url('/images/optimized/commodity-bg-1600.avif') type('image/avif'))) {
+  body.page-commodity {
+    background-image: image-set(
+      url('/images/optimized/commodity-bg-1600.avif') type('image/avif'),
+      url('/images/optimized/commodity-bg-1600.webp') type('image/webp'),
+      url('/images/commodity-bg.jpg') type('image/jpeg')
+    ) !important;
+  }
+}
+
+body.page-about {
+  background-image: url('/images/about-bg.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  height: 100vh;
+}
+@supports (background-image: image-set(url('/images/optimized/about-bg-1600.avif') type('image/avif'))) {
+  body.page-about {
+    background-image: image-set(
+      url('/images/optimized/about-bg-1600.avif') type('image/avif'),
+      url('/images/optimized/about-bg-1600.webp') type('image/webp'),
+      url('/images/about-bg.jpg') type('image/jpeg')
+    ) !important;
+  }
+}
+
+body.page-twitch {
+  background-image: url('/images/twitch-bg.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  height: 100vh;
+}
+@supports (background-image: image-set(url('/images/optimized/twitch-bg-1600.avif') type('image/avif'))) {
+  body.page-twitch {
+    background-image: image-set(
+      url('/images/optimized/twitch-bg-1600.avif') type('image/avif'),
+      url('/images/optimized/twitch-bg-1600.webp') type('image/webp'),
+      url('/images/twitch-bg.jpg') type('image/jpeg')
+    ) !important;
+  }
+}
+
+body.page-star {
+  background-image: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('/images/star-citizen.png');
+  background-size: cover, cover;
+  background-position: center center, center center;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  min-height: 100vh;
+  height: 100vh;
+}
+@supports (background-image: image-set(url('/images/optimized/star-citizen-1600.avif') type('image/avif'))) {
+  body.page-star {
+    background-image: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55)), image-set(
+      url('/images/optimized/star-citizen-1600.avif') type('image/avif'),
+      url('/images/optimized/star-citizen-1600.webp') type('image/webp'),
+      url('/images/star-citizen.png') type('image/jpeg')
+    ) !important;
+  }
+}
+
+/* Mobile/touch fallback: avoid background-attachment: fixed for better performance */
+@media (max-width: 767.98px), (hover: none) {
+  body.page-commodity,
+  body.page-about,
+  body.page-twitch,
+  body.page-star {
+    background-attachment: scroll !important;
+    background-attachment: scroll, scroll !important;
+  }
+}
+
+/* Internal-scrolling helper: apply class 'use-internal-scroll' on body when you want the page content
+   to scroll inside a fixed-height viewport (keeps the background fixed and full-viewport). */
+body.use-internal-scroll {
+  overflow: hidden; /* prevent outer document scroll */
+}
+.use-internal-scroll .main-viewport {
+  height: calc(100vh - var(--site-navbar-height));
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Apply the site font variable across the site. Keep this specific rather than using a global * selector
+   to avoid unexpectedly overriding third-party widget fonts, but ensure main UI and Handsontable use it. */
+html, body {
+  font-family: var(--site-font-family);
+}
+.container, .navbar, .hero-bg, #hot-container, .handsontable, .handsontable td, .handsontable th {
+  font-family: var(--site-font-family) !important;
 }
 
 /* Navbar layout rules to ensure consistent height and vertical centering */
@@ -239,9 +351,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-  font-family: "Comic Neue", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--site-font-family);
   line-height: 1.55;
   font-size: 1rem; /* 16px from root */
+}
+
+/* Ensure UI controls use the same site font for visual consistency */
+button, input, select, textarea, label {
+  font-family: var(--site-font-family) !important;
 }
 
 /* Constrain wide content for easier reading on large screens */
