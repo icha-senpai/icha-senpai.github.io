@@ -22,19 +22,20 @@
   <!-- DOMPurify/Handsontable/HyperFormula scripts moved to the end of the body to avoid layout blocking -->
   <style>
     html, body {
-      /* Avoid background-attachment: fixed (scroll-linked) which can cause jank on some browsers.
-         Use the default scrolling background to improve async panning performance. */
+      /* Use a fixed background that fills the viewport */
   /* JPEG fallback */
   background-image: url('images/commodity-bg.jpg') !important;
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-      min-height: 100vh;
-      height: auto !important;
-      min-height: 100%;
-      overflow-x: auto !important;
-      overflow-y: auto !important;
-      font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif !important;
+  background-attachment: fixed;
+    min-height: 100vh;
+    /* force the html/body to match the viewport so the background covers the full screen */
+    height: 100vh;
+    min-height: 100%;
+      overflow-x: auto;
+      overflow-y: auto;
+      font-family: 'Comic Neue', 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
     }
     @supports (background-image: image-set(url('/images/optimized/commodity-bg-1600.avif') type('image/avif'))) {
       html, body {
@@ -43,6 +44,10 @@
           url('/images/optimized/commodity-bg-1600.webp') type('image/webp'),
           url('images/commodity-bg.jpg') type('image/jpeg')
         ) !important;
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
       }
     }
     /* ...existing code... */
