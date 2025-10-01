@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Preconnect and load Comic Neue Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Using tuned system font stack from css/custom.css -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Commodity Table - Icha's Place</title>
@@ -22,8 +19,6 @@
   <!-- DOMPurify/Handsontable/HyperFormula scripts moved to the end of the body to avoid layout blocking -->
 </head>
 <body class="fouc-hidden page-commodity">
-</head>
-<body class="fouc-hidden">
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
@@ -52,31 +47,12 @@
     </div>
   </div>
   <div class="container py-5">
-    <h2 class="mb-4" style="color: #fff;">Multi Contract Cargo Tracker</h2>
+  <h2 class="mb-4">Multi Contract Cargo Tracker</h2>
     <div class="hot-responsive-wrapper hot-hidden-until-ready">
       <div id="hot-container"></div>
     </div>
   </div>
-  <style>
-    /* Hide the Handsontable wrapper until JS initialization completes to avoid FOUC.
-       Use opacity-based transition so the element keeps its layout while fading in. */
-    .hot-responsive-wrapper {
-      opacity: 1;
-      transition: opacity 220ms ease-in-out;
-    }
-    .hot-responsive-wrapper.hot-hidden-until-ready {
-      opacity: 0;
-      visibility: hidden; /* keep hidden until JS removes the class */
-      pointer-events: none; /* avoid accidental interactions while hidden */
-    }
-    /* Global FOUC prevention: hide the body until critical assets & JS are ready. */
-    body.fouc-hidden {
-      visibility: hidden !important;
-      opacity: 0 !important;
-      transition: opacity 220ms ease-in-out;
-    }
-    body { transition: opacity 220ms ease-in-out; }
-  </style>
+  <!-- page-commodity FOUC helpers moved into css/custom.css -->
   <!-- Initialization script moved to external file (commodity-init.js) and will be loaded after libraries. -->
   <script src="commodity-table.js"></script>
   <!-- Load DOMPurify, Handsontable and HyperFormula after CSS/DOM to avoid blocking layout -->

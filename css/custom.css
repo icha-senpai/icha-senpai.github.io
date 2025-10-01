@@ -17,8 +17,7 @@
 /* Standardize navbar height across the whole site */
 :root {
   --site-navbar-height: 60px; /* change this value if you want a different height */
-  /* Tuned system font stack for faster first paint. Comic Neue will still be loaded
-     via Google Fonts when available, but the system stack is used as the immediate fallback. */
+  /* Tuned system font stack for faster first paint. Using only the system stack now. */
   --site-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
 }
 
@@ -159,77 +158,7 @@ html, body {
   align-self: center;
 }
 
-/* Improve hamburger (navbar-toggler) appearance for contrast and accessibility */
-.navbar-toggler {
-  border: 1px solid rgba(255,255,255,0.12);
-  background-color: rgba(0,0,0,0.28);
-  padding: 0.25rem 0.45rem;
-  border-radius: 6px;
-  transition: background-color 160ms ease, border-color 160ms ease, transform 120ms ease;
-}
-.navbar-toggler:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
-}
-.navbar-toggler[aria-expanded="true"] {
-  background-color: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.18);
-  transform: translateY(-1px);
-}
-.navbar-toggler-icon {
-  /* Use a white three-line SVG so the icon is always visible over dark/complex backgrounds */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/></svg>");
-}
-@media (max-width: 576px) {
-  .navbar-toggler { padding: 0.3rem 0.5rem; }
-}
-
-/* Make the collapsed (hamburger) menu visually match the desktop navbar
-   when opened on small screens. Ensures background, link colors, spacing
-   and alignment feel consistent. */
-@media (max-width: 991.98px) {
-  /* When the mobile menu is open, make it match the regular navbar:
-     semi-transparent with a subtle blur so the page shows through. */
-  .navbar .collapse.show {
-    /* Avoid absolute positioning so the collapse can be hidden normally. */
-    position: static;
-    width: 100%;
-    /* Use the same translucent background and blur as the navbar itself. */
-    background-color: rgba(34, 34, 34, 0.3) !important;
-    backdrop-filter: blur(4px);
-    padding: 0.75rem 0;
-  }
-
-  /* Stack nav items vertically and center them like the desktop centered nav */
-  .navbar .navbar-nav {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    width: 100%;
-  }
-
-  .navbar .nav-item {
-    width: 100%;
-    text-align: center;
-  }
-
-  .navbar .nav-link {
-    color: #fff !important;
-    display: inline-block;
-    padding: 0.6rem 1rem;
-    width: auto;
-    font-weight: 700;
-  }
-
-  /* Keep active link styling consistent */
-  .navbar .nav-link.active {
-    color: #ff2222 !important;
-    background: transparent;
-  }
-
-  /* Add a subtle divider between items for clarity on very small screens */
-  .navbar .nav-item + .nav-item { border-top: 1px solid rgba(255,255,255,0.03); }
-}
+/* Restored default Bootstrap mobile hamburger/collapse behavior — no custom overrides here. */
 .navbar .navbar-brand {
   height: 100%;
   display: flex;
@@ -239,15 +168,62 @@ html, body {
 }
 /* Slightly transparent navbar with blur to improve contrast while keeping background visible */
 .navbar.bg-dark {
-  /* translucent dark background so the page shows through slightly, with a subtle blur */
-  background-color: rgba(34, 34, 34, 0.3) !important;
-  backdrop-filter: blur(4px);
+  /* transparent background; use the heavier site blur so the navbar appearance is consistent */
+  background-color: transparent !important;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 
 /* Ensure the fixed navbar remains above the toolbar and that the toolbar
    does not overlap the hamburger/toggler on small screens. */
 .navbar.fixed-top {
   z-index: 1100; /* higher than typical toolbar so toggler stays on top */
+}
+
+/* Fixed-position mobile collapse under the navbar
+   Keeps the expanded menu from overlapping other fixed UI and allows internal scrolling. */
+@media (max-width: 991.98px) {
+  .navbar {
+    z-index: 1110; /* ensure brand/toggler remain above the collapse */
+  }
+
+  .navbar .collapse,
+  .navbar .collapsing,
+  .navbar .collapse.show {
+    position: fixed !important;
+    top: var(--site-navbar-height);
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0 !important;
+    z-index: 1105; /* sit below the navbar but above page content */
+    background-color: rgba(12,12,12,0.48) !important;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    transform-origin: top;
+    max-height: calc(100vh - var(--site-navbar-height));
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* If the browser supports backdrop-filter, enable a transparent overlay and frosted blur
+     so the menu shows the blurred page content behind it. Browsers without support will
+     keep the semi-opaque RGBA background above for legibility. */
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .navbar .collapse,
+    .navbar .collapsing,
+    .navbar .collapse.show {
+      background-color: transparent !important;
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+  }
+
+  /* Avoid Bootstrap height animation jumps when using fixed positioning */
+  .navbar .collapsing {
+    height: auto !important;
+    overflow: visible !important;
+  }
 }
 
 #hot-toolbar {
@@ -382,5 +358,135 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 *:focus:not(:focus-visible) {
   outline: none;
 }
+
+/* ==== Styles moved from index.html (page-home) ==== */
+body.page-home {
+  /* keep layout and base colors scoped to the home page */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #181818;
+  color: #f3f3f3;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+body.page-home .container {
+  text-align: center;
+  color: #f3f3f3;
+  font-size: 1.15rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+.hero-btn-transparent {
+  background: transparent !important;
+  border: 2px solid #fff !important;
+  color: #ff2222 !important;
+  box-shadow: none !important;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  font-size: 1.25rem;
+  padding: 0.75rem 2rem;
+  margin-bottom: 0.5rem;
+}
+.hero-btn-transparent:hover, .hero-btn-transparent:focus {
+  background: rgba(255,255,255,0.15) !important;
+  color: #ff2222 !important;
+  border-color: #ff2222 !important;
+}
+
+/* ==== Styles moved from commodity-table.html (FOUC helpers) ==== */
+/* Keep these scoped to the commodity page so they don't affect other pages */
+.page-commodity .hot-responsive-wrapper {
+  opacity: 1;
+  transition: opacity 220ms ease-in-out;
+}
+.page-commodity .hot-responsive-wrapper.hot-hidden-until-ready {
+  opacity: 0;
+  visibility: hidden; /* keep hidden until JS removes the class */
+  pointer-events: none; /* avoid accidental interactions while hidden */
+}
+/* Global FOUC prevention class used by the commodity page initializer */
+body.fouc-hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  transition: opacity 220ms ease-in-out;
+}
+body { transition: opacity 220ms ease-in-out; }
+
+/* ==== Centralized rules moved from inline attributes ==== */
+
+/* Home hero specifics */
+.page-home .hero-bg .container {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.85);
+}
+.page-home .hero-bg img.mb-4 {
+  max-width: 300px;
+  height: auto;
+}
+.page-home .hero-bg h1.display-3 {
+  text-shadow: 0 3px 12px rgba(0,0,0,0.95);
+  font-weight: 900;
+}
+.page-home .hero-bg h1.display-3 span {
+  color: #ff2222;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.95);
+}
+.page-home .hero-bg p.lead {
+  text-shadow: 0 2px 8px rgba(0,0,0,0.85);
+  font-weight: 700;
+}
+
+/* About page container tweaks */
+.page-about .container.py-5 {
+  margin-top: 80px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+}
+
+/* Commodity page small headings */
+.page-commodity h2.mb-4 { color: #fff; }
+
+/* Twitch embed placeholders and layout */
+.page-twitch h2.text-center { color: #fff; }
+.page-twitch .embed-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+.page-twitch .twitch-placeholder {
+  max-width: 100%;
+  border-radius: 8px;
+}
+.page-twitch .twitch-placeholder[data-type="chat"] {
+  min-width: 220px;
+  background: #18181b;
+}
+.page-twitch .twitch-placeholder .placeholder-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-width: 220px;
+  min-height: 200px;
+  background: linear-gradient(180deg,#111,#222);
+  border-radius: 8px;
+  padding: 1rem;
+  color: #eee;
+}
+.page-twitch .twitch-placeholder .placeholder-inner strong { font-size: 1.1rem; margin-bottom: .5rem; }
+.page-twitch .twitch-placeholder .placeholder-inner p { margin: 0 0 .75rem; color: #ccc; max-width: 36rem; text-align: center; }
+.page-twitch .twitch-placeholder .placeholder-inner .controls { display:flex; gap:.5rem; align-items:center; }
+.page-twitch label.remember-choice-label { color: #bbb; font-size: .9rem; display:flex; align-items:center; gap:.35rem; margin-left:.5rem; }
+
+/* Star Citizen page layout */
+.page-star main.container { padding-top: 100px; }
+.page-star h1.display-4 { color: #ff2222; }
+.page-star p.lead { color: #ddd; max-width: 800px; margin: 0 auto; }
+.page-star .resource-card p { color: #ddd; }
+
+
 
 
