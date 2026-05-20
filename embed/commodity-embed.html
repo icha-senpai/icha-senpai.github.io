@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Commodity Table Embed</title>
+  <!-- Minimal required CSS: Handsontable and small local rules for toolbar and container -->
+  <link href="https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.css" rel="stylesheet">
+  <style>
+    :root { --site-navbar-height: 60px; --site-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    html, body { font-family: var(--site-font-family); margin:0; padding:0; background:#181818; color:#f3f3f3; }
+    body { padding: 0; }
+    .container { padding: 1rem; max-width:1100px; margin:0 auto; }
+    #hot-toolbar { position: relative; z-index: 1050; display:flex; justify-content:center; padding:0.5rem; }
+    .hot-toolbar-inner { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
+    #hot-container { margin:0; padding:0; width:100%; min-height:50vh; max-height:900px; height:min(70vh,900px); overflow:auto; }
+    .hot-toggle-icon { margin-right:0.35rem; }
+    #hot-toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 18px; z-index: 1200; pointer-events: none; }
+    .hot-toast-inner { background: rgba(20,20,20,0.9); color: #fff; padding: 0.6rem 1rem; border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,0.6); opacity: 0; transition: opacity 220ms ease-in-out, transform 220ms ease-in-out; transform: translateY(6px); pointer-events: auto; }
+    .hot-toast-inner.show { opacity: 1; transform: translateY(0); }
+    .visually-hidden { position: absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+    h2 { color:#fff; text-shadow:0 2px 6px rgba(0,0,0,0.7); font-weight:700; }
+    /* Small responsive tweaks */
+    @media (max-width:576px) { #hot-container { height: 60vh; } }
+  </style>
+</head>
+<body class="page-commodity">
+  <div class="container">
+    <h2 class="mb-4">Multi Contract Cargo Tracker (Embed)</h2>
+    <div id="hot-toolbar">
+      <div class="hot-toolbar-inner">
+        <button id="toggle-ef" class="btn btn-warning btn-sm me-2" aria-pressed="false">Toggle Extra Stops</button>
+        <button id="toggle-extra-rows" class="btn btn-info btn-sm me-2" aria-pressed="false">Toggle Extra Rows</button>
+        <span id="hot-aria-live" class="visually-hidden" aria-live="polite" aria-atomic="true"></span>
+      </div>
+    </div>
+
+    <div class="hot-responsive-wrapper hot-hidden-until-ready">
+      <div id="hot-container"></div>
+    </div>
+  </div>
+
+  <!-- Libraries from CDN -->
+  <!-- Loader: try local copies first (same folder) and fall back to CDN. When libs are ready we'll run the embed code below. -->
+  <script>
+  // Define the embed runtime (toolbar + initializer) but don't run it until libs are loaded.
+  function runCommodityEmbed() {
+    // Inlined toolbar logic (from commodity-table.js)
+    // Assumes table is initialized as 'hot' and columns E (index 4) and F (index 5)
+
+    // Initialize toolbar when Handsontable is ready. This avoids polling and races.
+    function initHotToolbar() {
+      var container = document.getElementById('hot-container');
+      if (!container) {
+        return;
+      }
+      var hot = container.handsontableInstance;
+      if (!hot) {
+        if (!initHotToolbar._waiting) {
+          initHotToolbar._waiting = true;
+          var onHotReady = function() {
+            initHotToolbar._waiting = false;
+            try { initHotToolbar(); } catch (e) { console.error('commodity-embed: error re-initializing toolbar after hot-ready', e); }
+            document.removeEventListener('hot-ready', onHotReady);
+          };
+          document.addEventListener('hot-ready', onHotReady);
+          setTimeout(function() {
+            if (!container.handsontableInstance) {
+              // still waiting for Handsontable instance; will initialize when hot-ready fires.
+            } else {
+              try { initHotToolbar(); } catch (e) { console.error('commodity-embed: error initializing toolbar after instance attached', e); }
+            }
+          }, 1000);
+        }
+        return;
+      }
+
+      var toolbar = document.getElementById('hot-toolbar');
+      if (!toolbar) {
+        toolbar = document.createElement('div');
+        toolbar.id = 'hot-toolbar';
+        document.body.insertBefore(toolbar, document.body.firstChild.nextSibling);
+        var inner = document.createElement('div');
+        inner.className = 'hot-toolbar-inner';
+        inner.innerHTML = `
+        <button id="toggle-ef" class="btn btn-warning btn-sm me-2" aria-pressed="false">Toggle Extra Stops</button>
+        <button id="toggle-extra-rows" class="btn btn-info btn-sm me-2" aria-pressed="false">Toggle Extra Rows</button>
+        <span id="hot-aria-live" class="visually-hidden" aria-live="polite" aria-atomic="true"></span>
+      `;
+        toolbar.appendChild(inner);
+      }
+
+      var hiddenColsSetting = (hot.getSettings && hot.getSettings().hiddenColumns) || {};
+      var extraColsHidden = Array.isArray(hiddenColsSetting.columns) ? hiddenColsSetting.columns.includes(4) || hiddenColsSetting.columns.includes(5) : true;
+
+      var extraRowsHidden = false;
+      try {
+        var hiddenRowsSetting = (hot.getSettings && hot.getSettings().hiddenRows) || {};
+        if (Array.isArray(hiddenRowsSetting.rows) && hiddenRowsSetting.rows.length > 0) {
+          extraRowsHidden = true;
+        }
+      } catch (e) {/* ignore */}
+
+      var colToggleBtn = document.getElementById('toggle-ef');
+      var rowsToggleBtn = document.getElementById('toggle-extra-rows');
+      var ariaLive = document.getElementById('hot-aria-live');
+
+      function ensureButtonStructure(btn, defaultLabel) {
+        if (!btn) return { icon: null, label: null };
+        var icon = btn.querySelector('.hot-toggle-icon');
+        var label = btn.querySelector('.hot-toggle-label');
+        if (!icon || !label) {
+          var existing = btn.textContent || defaultLabel || '';
+          btn.innerHTML = '';
+          icon = document.createElement('span');
+          icon.className = 'hot-toggle-icon';
+          label = document.createElement('span');
+          label.className = 'hot-toggle-label';
+          label.textContent = existing.trim();
+          btn.appendChild(icon);
+          btn.appendChild(label);
+        }
+        return { icon: icon, label: label };
+      }
+
+      var colParts = ensureButtonStructure(colToggleBtn, 'Toggle Extra Stops');
+      var colIcon = colParts.icon, colLabel = colParts.label;
+
+      function updateColButton() {
+        if (!colToggleBtn) return;
+        if (extraColsHidden) {
+          if (colLabel) colLabel.textContent = 'Show Extra Stops';
+          colToggleBtn.classList.remove('btn-outline-secondary');
+          colToggleBtn.classList.add('btn-warning');
+          colToggleBtn.setAttribute('aria-pressed', 'false');
+          if (colIcon) colIcon.textContent = '\u25CB';
+          colToggleBtn.classList.remove('hot-toggle-active');
+        } else {
+          if (colLabel) colLabel.textContent = 'Hide Extra Stops';
+          colToggleBtn.classList.remove('btn-warning');
+          colToggleBtn.classList.add('btn-outline-secondary');
+          colToggleBtn.setAttribute('aria-pressed', 'true');
+          if (colIcon) colIcon.textContent = '\u25CF';
+          colToggleBtn.classList.add('hot-toggle-active');
+        }
+      }
+
+      var rowParts = ensureButtonStructure(rowsToggleBtn, 'Toggle Extra Rows');
+      var rowIcon = rowParts.icon, rowLabel = rowParts.label;
+
+      function updateRowsButton(state) {
+        if (!rowsToggleBtn) return;
+        if (state) {
+          if (rowLabel) rowLabel.textContent = 'Show Extra Rows';
+          rowsToggleBtn.setAttribute('aria-pressed', 'false');
+          if (rowIcon) rowIcon.textContent = '\u25CB';
+          rowsToggleBtn.classList.remove('hot-toggle-active');
+        } else {
+          if (rowLabel) rowLabel.textContent = 'Hide Extra Rows';
+          rowsToggleBtn.setAttribute('aria-pressed', 'true');
+          if (rowIcon) rowIcon.textContent = '\u25CF';
+          rowsToggleBtn.classList.add('hot-toggle-active');
+        }
+      }
+
+      updateColButton();
+      updateRowsButton(extraRowsHidden);
+
+      if (colToggleBtn && !colToggleBtn.querySelector('.hot-toggle-icon')) {
+        var span = document.createElement('span');
+        span.className = 'hot-toggle-icon';
+        span.textContent = extraColsHidden ? '\u25CB' : '\u25CF';
+        colToggleBtn.insertBefore(span, colToggleBtn.firstChild);
+      }
+      if (rowsToggleBtn && !rowsToggleBtn.querySelector('.hot-toggle-icon')) {
+        var span2 = document.createElement('span');
+        span2.className = 'hot-toggle-icon';
+        span2.textContent = extraRowsHidden ? '\u25CB' : '\u25CF';
+        rowsToggleBtn.insertBefore(span2, rowsToggleBtn.firstChild);
+      }
+
+      if (colToggleBtn) {
+        colToggleBtn.addEventListener('click', function() {
+          try {
+            var plugin = hot.getPlugin('hiddenColumns');
+            if (extraColsHidden) {
+              plugin.showColumns([4,5]);
+              extraColsHidden = false;
+              ariaLive && (ariaLive.textContent = 'Extra Stops columns are now visible');
+            } else {
+              plugin.hideColumns([4,5]);
+              extraColsHidden = true;
+              ariaLive && (ariaLive.textContent = 'Extra Stops columns are now hidden');
+            }
+            updateColButton();
+            var icon = colToggleBtn && colToggleBtn.querySelector('.hot-toggle-icon');
+            if (icon) icon.textContent = extraColsHidden ? '\u25CB' : '\u25CF';
+            if (colToggleBtn) {
+              if (!extraColsHidden) colToggleBtn.classList.add('hot-toggle-active'); else colToggleBtn.classList.remove('hot-toggle-active');
+            }
+            hot.render();
+            showHotToast(extraColsHidden ? 'Extra Stops hidden' : 'Extra Stops visible');
+          } catch (e) {
+            console.error('Failed to toggle extra columns', e);
+          }
+        });
+      }
+
+      if (rowsToggleBtn) {
+        rowsToggleBtn.addEventListener('click', function() {
+          try {
+            var hiddenRowsPlugin = hot.getPlugin('hiddenRows');
+            var targetRows = Array.from({length: 109}, (_, i) => i + 14);
+            if (!extraRowsHidden) {
+              hiddenRowsPlugin.hideRows(targetRows);
+              extraRowsHidden = true;
+              ariaLive && (ariaLive.textContent = 'Extra rows are now hidden');
+            } else {
+              hiddenRowsPlugin.showRows(targetRows);
+              extraRowsHidden = false;
+              ariaLive && (ariaLive.textContent = 'Extra rows are now visible');
+            }
+            updateRowsButton(extraRowsHidden);
+            var icon2 = rowsToggleBtn && rowsToggleBtn.querySelector('.hot-toggle-icon');
+            if (icon2) icon2.textContent = extraRowsHidden ? '\u25CB' : '\u25CF';
+            if (rowsToggleBtn) {
+              if (!extraRowsHidden) rowsToggleBtn.classList.add('hot-toggle-active'); else rowsToggleBtn.classList.remove('hot-toggle-active');
+            }
+            hot.render();
+            showHotToast(extraRowsHidden ? 'Extra rows hidden' : 'Extra rows visible');
+          } catch (e) {
+            console.error('Failed to toggle extra rows', e);
+          }
+        });
+      }
+    }
+
+    document.addEventListener('hot-ready', function() { try { initHotToolbar(); } catch (e) { console.error(e); } });
+    document.addEventListener('DOMContentLoaded', function() { initHotToolbar(); });
+
+    function showHotToast(message) {
+      if (!message) return;
+      var toastRoot = document.getElementById('hot-toast');
+      if (!toastRoot) {
+        toastRoot = document.createElement('div');
+        toastRoot.id = 'hot-toast';
+        document.body.appendChild(toastRoot);
+      }
+      toastRoot.innerHTML = '';
+      var inner = document.createElement('div');
+      inner.className = 'hot-toast-inner';
+      inner.textContent = message;
+      toastRoot.appendChild(inner);
+      requestAnimationFrame(function() { inner.classList.add('show'); });
+      setTimeout(function() { inner.classList.remove('show'); }, 1800);
+      setTimeout(function() { try { toastRoot.removeChild(inner); } catch (e) {} }, 2200);
+    }
+
+    // Inlined initializer (from commodity-init.js)
+    (function() {
+      function init() {
+        // Define the header row
+        const hotHeader = ['Commodity', 'Dropoff 1', 'Dropoff 2', 'Dropoff 3', 'Dropoff 4', 'Dropoff 5', 'SCU Total', 'Contract Payout', 'Contract Payout (num)'];
+        const commodityNames = Array.from({length: 13}, () => '');
+        const hotRows = commodityNames.map((name, i) => {
+          const rowNum = i + 2;
+          return [name, '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
+        });
+        const extraRows = Array.from({length: 109}, (_, i) => {
+          const rowNum = 15 + i;
+          return ['', '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
+        });
+        const totalsRow = [
+          'Totals',
+          '=SUM(B2:B123)',
+          '=SUM(C2:C123)',
+          '=SUM(D2:D123)',
+          '=SUM(E2:E123)',
+          '=SUM(F2:F123)',
+          '=SUM(G2:G123)',
+          '=SUM(H2:H123)',
+          '=SUM(I2:I123)',
+          '=SUM(I2:I123)'
+        ];
+        const hotData = [hotHeader, ...hotRows, ...extraRows, totalsRow];
+        const commodityOptions = [
+          'AcryliPlex Composite', 'Audio Visual Equipment', 'Bioplastic', 'Carbon-Silk', 'Construction Materials',
+          'Diamond Laminate', 'DynaFlex', 'Kopion Horn', 'Luminalia Gift Box', 'Marok Gem', 'Neograph', 'Omnapoxy',
+          'Party Favors', 'Red Festival Envelope', 'Ship Ammunition', 'Souvenirs', 'Thermalfoam', 'Year of the Dog Envelope',
+          'Year of the Monkey Envelope', 'Year of the Pig', 'Year of the Ram Envelope', 'Year of the Rooster Envelope',
+          'Agricium', 'Agricium Ore', 'Aluminum', 'Aluminum Ore', 'Borase', 'Borase Ore', 'Carbon', 'Cobalt', 'Copper',
+          'Copper Ore', 'Gold', 'Gold Ore', 'Iron', 'Iron Ore', 'Mercury', 'Riccite', 'Silicon', 'Stileron', 'Tin',
+          'Titanium', 'Titanium Ore', 'Tungsten', 'Tungsten Ore', "Xa' Pyen", 'Agricultural Supplies', 'DCSR2',
+          'Ranta Dung', 'Altruciatoxin', 'Distilled Spirits', "E'tam", 'Gasping Weevil Eggs', 'Maze', 'Neon',
+          'Osoian Hides', 'Revenant Tree Pollen', 'SLAM', 'Stims', 'WiDow', 'Amioshi Plague', 'Degnous Root',
+          'Golden Medmons', 'Heart of the Woods', 'Jumping Limes', 'Pitambu', 'Prota', 'Revenant Pods', 'Sunset Berries',
+          'Ammonia', 'Argon', 'Astatine', 'Chlorine', 'Fluorine', 'Helium', 'Hydrogen', 'Iodine', 'Methane', 'Nitrogen',
+          'Partillium', 'Pressurized Ice', 'Aphorite', 'Beryl', 'Beryl Raw', 'Bexalite', 'Bexalite Raw', 'Corundum',
+          'Corundum Raw', 'Diamond', 'Diamond Raw', 'Dolivine', 'Hadanite', 'Hephaestanite', 'Hephaestanite Raw',
+          'Janalite', 'Laranite', 'Laranite Raw', 'Potassium', 'Quantainium', 'Quantainium Raw', 'Quartz', 'Quartz Raw',
+          'Taranite', 'Taranite Raw', 'Atlasium', 'Beradom', 'Dymantium', 'Feynmaline', 'Glacosite', 'Steel', 'Compboard',
+          'Scrap', 'Fresh Food', 'Human Food Bars', 'Processed Food', 'Inert Materials', 'Medical Supplies',
+          'Recycled Material Composite', 'Waste'
+        ];
+        commodityOptions.sort((a,b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+        const NONE_LABEL = '\u2014 none \u2014';
+        commodityOptions.unshift('');
+
+        const container = document.getElementById('hot-container');
+        const hot = new Handsontable(container, {
+          data: hotData,
+          rowHeaders: true,
+          colHeaders: true,
+          licenseKey: 'non-commercial-and-evaluation',
+          width: '100%',
+          height: 600,
+          stretchH: 'all',
+          hiddenColumns: { columns: [4,5,8], indicators: false },
+          hiddenRows: { rows: Array.from({length: 109}, (_, i) => i + 14), indicators: false },
+          manualColumnResize: true,
+          manualRowResize: true,
+          filters: true,
+          dropdownMenu: true,
+          contextMenu: true,
+          readOnly: false,
+          comments: true,
+          cells: function(row, col) {
+            const cellProperties = {};
+            const isDataRow = row > 0 && row < 123;
+            if (col === 0 && isDataRow) {
+              cellProperties.editor = 'autocomplete';
+              cellProperties.source = function(query, process) {
+                try {
+                  const q = (query || '').toString().toLowerCase();
+                  const matches = commodityOptions.filter(item => {
+                    if (!item) return true;
+                    if (!q) return true;
+                    return item.toLowerCase().indexOf(q) !== -1;
+                  });
+                  const display = matches.map(m => (m === '' ? NONE_LABEL : m));
+                  process(display.slice());
+                } catch (e) {
+                  process(commodityOptions.map(m => (m === '' ? NONE_LABEL : m)).slice());
+                }
+              };
+              cellProperties.strict = true;
+              cellProperties.allowInvalid = false;
+              cellProperties.validator = function(value, callback) {
+                const ok = commodityOptions.indexOf(value) !== -1 || value === NONE_LABEL;
+                if (typeof callback === 'function') return callback(ok);
+                return ok;
+              };
+              const originalRenderer = Handsontable.renderers.TextRenderer;
+              cellProperties.renderer = function(instance, td, row, col, prop, value, cellProps) {
+                originalRenderer.apply(this, arguments);
+                if (value === '') td.textContent = NONE_LABEL;
+              };
+            }
+            if (row === 123) { cellProperties.className = 'htBold'; cellProperties.readOnly = true; }
+            if (row === 0 && (col === 0 || col === 6 || col === 7)) { cellProperties.readOnly = true; }
+            if (col === 6) { cellProperties.readOnly = true; }
+            if (col === 7) {
+              cellProperties.type = 'text';
+              cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
+                Handsontable.renderers.TextRenderer.apply(this, arguments);
+                var num = Number(value);
+                if (!isNaN(num) && value !== null && value !== '') {
+                  td.textContent = '$' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+              };
+              if (row === 123) { cellProperties.readOnly = true; }
+            }
+            if (col === 8) { cellProperties.readOnly = true; }
+            return cellProperties;
+          },
+          dropdownMenu: [
+            'filter_by_condition', 'filter_by_value', 'filter_action_bar',
+            'freeze_column', 'freeze_row', 'remove_row', 'remove_col',
+            'row_above', 'row_below', 'col_left', 'col_right',
+            'clear_column', 'clear_custom_sort', 'undo', 'redo',
+            'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
+            'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
+          ],
+          contextMenu: [
+            'row_above', 'row_below', 'col_left', 'col_right',
+            'remove_row', 'remove_col', 'undo', 'redo',
+            'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
+            'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
+          ],
+          fixedRowsTop: 1,
+          fixedRowsBottom: 1,
+          formulas: { engine: HyperFormula },
+          allowInsertRow: true,
+          allowInsertColumn: true,
+          allowRemoveRow: true,
+          allowRemoveColumn: true,
+          manualColumnFreeze: true,
+          manualRowMove: true,
+          manualColumnMove: true,
+          autoColumnSize: true,
+          autoRowSize: true,
+          multiColumnSorting: true,
+          multiRowSorting: true,
+          afterOnCellMouseDown: function(event, coords, TD) {
+            const row = coords.row, col = coords.col;
+            const isDataRow = row > 0 && row < 123;
+            if (col === 0 && isDataRow) {
+              this.selectCell(row, col);
+              const instance = this;
+              setTimeout(() => {
+                try {
+                  const editor = instance.getActiveEditor && instance.getActiveEditor();
+                  try {
+                  } catch (e) { }
+                  if (editor && typeof editor.beginEditing === 'function') { editor.beginEditing(); }
+                  else if (editor && typeof editor.open === 'function') { editor.open(); }
+                  let editableEl = null;
+                  if (editor) editableEl = editor.TEXTAREA || editor.textarea || editor.select || editor.selectElement || editor.htEditor || null;
+                  if (!editableEl) editableEl = document.activeElement || TD && TD.querySelector && TD.querySelector('input,textarea,select');
+                  if (editableEl) {
+                    try { const ev = new KeyboardEvent('keydown', {key: 'ArrowDown', code: 'ArrowDown', bubbles: true}); editableEl.dispatchEvent(ev); } catch (e) {}
+                  }
+                  try {
+                    const root = instance.rootElement || instance.rootDocument || document;
+                    const caret = root.querySelector && (root.querySelector('.handsontableSelectEditor .caret') || root.querySelector('.htDropdownCaret') || root.querySelector('.htAutocompleteCaret'));
+                    if (caret) caret.dispatchEvent(new MouseEvent('mousedown', {bubbles: true}));
+                  } catch (e) {}
+                } catch (e) {}
+              }, 0);
+            }
+          },
+          afterChange: function(changes, source) {
+            if (!changes) return;
+            const instance = this;
+            changes.forEach(([row, prop, oldVal, newVal]) => {
+              try {
+                if (newVal === NONE_LABEL) {
+                  instance.setDataAtCell(row, prop, '', 'normalize-none');
+                }
+              } catch (e) {}
+            });
+          }
+        });
+        container.handsontableInstance = hot;
+
+        try {
+          var wrapper = document.querySelector('.hot-responsive-wrapper.hot-hidden-until-ready');
+          if (wrapper) wrapper.classList.remove('hot-hidden-until-ready');
+        } catch (e) {}
+
+        function revealWhenReady() {
+          try { var body = document.body; if (body && body.classList.contains('fouc-hidden')) body.classList.remove('fouc-hidden'); } catch (e) {}
+          try { document.dispatchEvent(new Event('hot-ready')); } catch (e) { var evt = document.createEvent('Event'); evt.initEvent('hot-ready', true, true); document.dispatchEvent(evt); }
+        }
+
+        if (document.readyState === 'complete') {
+          revealWhenReady();
+        } else {
+          window.addEventListener('load', revealWhenReady, { once: true });
+          setTimeout(revealWhenReady, 3000);
+        }
+      }
+
+      // Wait until the required libs are present
+      function whenReady() {
+        if (typeof Handsontable !== 'undefined' && typeof HyperFormula !== 'undefined') {
+          init();
+        } else {
+          setTimeout(whenReady, 50);
+        }
+      }
+      whenReady();
+    })();
+  }
+
+  // Loader: try local filenames first, then CDN. Loads CSS then scripts sequentially.
+  (function loadLibrariesAndStart() {
+    var cdn = {
+      dompurify: 'https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js',
+      handsontable: 'https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.js',
+      handsontableCSS: 'https://cdn.jsdelivr.net/npm/handsontable@13.1.0/dist/handsontable.min.css',
+      hyperformula: 'https://cdn.jsdelivr.net/npm/hyperformula@2.6.0/dist/hyperformula.full.min.js'
+    };
+
+    function loadCss(local, cdnUrl) {
+      return new Promise(function(resolve) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = local;
+        link.onload = function() { resolve(); };
+        link.onerror = function() {
+          // fallback to CDN
+          var cdnLink = document.createElement('link');
+          cdnLink.rel = 'stylesheet';
+          cdnLink.href = cdnUrl;
+          cdnLink.onload = function() { resolve(); };
+          cdnLink.onerror = function() { resolve(); };
+          document.head.appendChild(cdnLink);
+        };
+        document.head.appendChild(link);
+      });
+    }
+
+    function loadScript(local, cdnUrl) {
+      return new Promise(function(resolve) {
+        var s = document.createElement('script');
+        s.src = local;
+        s.async = true;
+        s.onload = function() { resolve(); };
+        s.onerror = function() {
+          // fallback to CDN
+          var cs = document.createElement('script');
+          cs.src = cdnUrl;
+          cs.async = true;
+          cs.onload = function() { resolve(); };
+          cs.onerror = function() { resolve(); };
+          document.head.appendChild(cs);
+        };
+        document.head.appendChild(s);
+      });
+    }
+
+    // Try to load local files in the same folder as this HTML if present, otherwise load CDN
+    Promise.resolve()
+      .then(function() { return loadCss('./handsontable.min.css', cdn.handsontableCSS); })
+      .then(function() { return loadScript('./purify.min.js', cdn.dompurify); })
+      .then(function() { return loadScript('./hyperformula.full.min.js', cdn.hyperformula); })
+      .then(function() { return loadScript('./handsontable.min.js', cdn.handsontable); })
+      .then(function() {
+        // small grace period for globals
+        setTimeout(function() { try { runCommodityEmbed(); } catch (e) { console.error('commodity-embed start failed', e); } }, 20);
+      });
+  })();
+  </script>
+
+      const hotRows = commodityNames.map((name, i) => {
+        const rowNum = i + 2;
+        return [name, '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
+      });
+      const extraRows = Array.from({length: 109}, (_, i) => {
+        const rowNum = 15 + i;
+        return ['', '', '', '', '', '', `=SUM(B${rowNum}:F${rowNum})`, '', ''];
+      });
+      const totalsRow = [
+        'Totals',
+        '=SUM(B2:B123)',
+        '=SUM(C2:C123)',
+        '=SUM(D2:D123)',
+        '=SUM(E2:E123)',
+        '=SUM(F2:F123)',
+        '=SUM(G2:G123)',
+        '=SUM(H2:H123)',
+        '=SUM(I2:I123)',
+        '=SUM(I2:I123)'
+      ];
+      const hotData = [hotHeader, ...hotRows, ...extraRows, totalsRow];
+      const commodityOptions = [
+        'AcryliPlex Composite', 'Audio Visual Equipment', 'Bioplastic', 'Carbon-Silk', 'Construction Materials',
+        'Diamond Laminate', 'DynaFlex', 'Kopion Horn', 'Luminalia Gift Box', 'Marok Gem', 'Neograph', 'Omnapoxy',
+        'Party Favors', 'Red Festival Envelope', 'Ship Ammunition', 'Souvenirs', 'Thermalfoam', 'Year of the Dog Envelope',
+        'Year of the Monkey Envelope', 'Year of the Pig', 'Year of the Ram Envelope', 'Year of the Rooster Envelope',
+        'Agricium', 'Agricium Ore', 'Aluminum', 'Aluminum Ore', 'Borase', 'Borase Ore', 'Carbon', 'Cobalt', 'Copper',
+        'Copper Ore', 'Gold', 'Gold Ore', 'Iron', 'Iron Ore', 'Mercury', 'Riccite', 'Silicon', 'Stileron', 'Tin',
+        'Titanium', 'Titanium Ore', 'Tungsten', 'Tungsten Ore', "Xa' Pyen", 'Agricultural Supplies', 'DCSR2',
+        'Ranta Dung', 'Altruciatoxin', 'Distilled Spirits', "E'tam", 'Gasping Weevil Eggs', 'Maze', 'Neon',
+        'Osoian Hides', 'Revenant Tree Pollen', 'SLAM', 'Stims', 'WiDow', 'Amioshi Plague', 'Degnous Root',
+        'Golden Medmons', 'Heart of the Woods', 'Jumping Limes', 'Pitambu', 'Prota', 'Revenant Pods', 'Sunset Berries',
+        'Ammonia', 'Argon', 'Astatine', 'Chlorine', 'Fluorine', 'Helium', 'Hydrogen', 'Iodine', 'Methane', 'Nitrogen',
+        'Partillium', 'Pressurized Ice', 'Aphorite', 'Beryl', 'Beryl Raw', 'Bexalite', 'Bexalite Raw', 'Corundum',
+        'Corundum Raw', 'Diamond', 'Diamond Raw', 'Dolivine', 'Hadanite', 'Hephaestanite', 'Hephaestanite Raw',
+        'Janalite', 'Laranite', 'Laranite Raw', 'Potassium', 'Quantainium', 'Quantainium Raw', 'Quartz', 'Quartz Raw',
+        'Taranite', 'Taranite Raw', 'Atlasium', 'Beradom', 'Dymantium', 'Feynmaline', 'Glacosite', 'Steel', 'Compboard',
+        'Scrap', 'Fresh Food', 'Human Food Bars', 'Processed Food', 'Inert Materials', 'Medical Supplies',
+        'Recycled Material Composite', 'Waste'
+      ];
+      commodityOptions.sort((a,b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      const NONE_LABEL = '\u2014 none \u2014';
+      commodityOptions.unshift('');
+
+      const container = document.getElementById('hot-container');
+      const hot = new Handsontable(container, {
+        data: hotData,
+        rowHeaders: true,
+        colHeaders: true,
+        licenseKey: 'non-commercial-and-evaluation',
+        width: '100%',
+        height: 600,
+        stretchH: 'all',
+        hiddenColumns: { columns: [4,5,8], indicators: false },
+        hiddenRows: { rows: Array.from({length: 109}, (_, i) => i + 14), indicators: false },
+        manualColumnResize: true,
+        manualRowResize: true,
+        filters: true,
+        dropdownMenu: true,
+        contextMenu: true,
+        readOnly: false,
+        comments: true,
+        cells: function(row, col) {
+          const cellProperties = {};
+          const isDataRow = row > 0 && row < 123;
+          if (col === 0 && isDataRow) {
+            cellProperties.editor = 'autocomplete';
+            cellProperties.source = function(query, process) {
+              try {
+                const q = (query || '').toString().toLowerCase();
+                const matches = commodityOptions.filter(item => {
+                  if (!item) return true;
+                  if (!q) return true;
+                  return item.toLowerCase().indexOf(q) !== -1;
+                });
+                const display = matches.map(m => (m === '' ? NONE_LABEL : m));
+                process(display.slice());
+              } catch (e) {
+                process(commodityOptions.map(m => (m === '' ? NONE_LABEL : m)).slice());
+              }
+            };
+            cellProperties.strict = true;
+            cellProperties.allowInvalid = false;
+            cellProperties.validator = function(value, callback) {
+              const ok = commodityOptions.indexOf(value) !== -1 || value === NONE_LABEL;
+              if (typeof callback === 'function') return callback(ok);
+              return ok;
+            };
+            const originalRenderer = Handsontable.renderers.TextRenderer;
+            cellProperties.renderer = function(instance, td, row, col, prop, value, cellProps) {
+              originalRenderer.apply(this, arguments);
+              if (value === '') td.textContent = NONE_LABEL;
+            };
+          }
+          if (row === 123) { cellProperties.className = 'htBold'; cellProperties.readOnly = true; }
+          if (row === 0 && (col === 0 || col === 6 || col === 7)) { cellProperties.readOnly = true; }
+          if (col === 6) { cellProperties.readOnly = true; }
+          if (col === 7) {
+            cellProperties.type = 'text';
+            cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
+              Handsontable.renderers.TextRenderer.apply(this, arguments);
+              var num = Number(value);
+              if (!isNaN(num) && value !== null && value !== '') {
+                td.textContent = '$' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+              }
+            };
+            if (row === 123) { cellProperties.readOnly = true; }
+          }
+          if (col === 8) { cellProperties.readOnly = true; }
+          return cellProperties;
+        },
+        dropdownMenu: [
+          'filter_by_condition', 'filter_by_value', 'filter_action_bar',
+          'freeze_column', 'freeze_row', 'remove_row', 'remove_col',
+          'row_above', 'row_below', 'col_left', 'col_right',
+          'clear_column', 'clear_custom_sort', 'undo', 'redo',
+          'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
+          'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
+        ],
+        contextMenu: [
+          'row_above', 'row_below', 'col_left', 'col_right',
+          'remove_row', 'remove_col', 'undo', 'redo',
+          'make_read_only', 'alignment', 'commentsAddEdit', 'commentsRemove',
+          'mergeCells', 'unmergeCells', 'copy', 'cut', 'paste'
+        ],
+        fixedRowsTop: 1,
+        fixedRowsBottom: 1,
+        formulas: { engine: HyperFormula },
+        allowInsertRow: true,
+        allowInsertColumn: true,
+        allowRemoveRow: true,
+        allowRemoveColumn: true,
+        manualColumnFreeze: true,
+        manualRowMove: true,
+        manualColumnMove: true,
+        autoColumnSize: true,
+        autoRowSize: true,
+        multiColumnSorting: true,
+        multiRowSorting: true,
+        afterOnCellMouseDown: function(event, coords, TD) {
+          const row = coords.row, col = coords.col;
+          const isDataRow = row > 0 && row < 123;
+          if (col === 0 && isDataRow) {
+            this.selectCell(row, col);
+            const instance = this;
+            setTimeout(() => {
+              try {
+                const editor = instance.getActiveEditor && instance.getActiveEditor();
+                try {
+                } catch (e) { }
+                if (editor && typeof editor.beginEditing === 'function') { editor.beginEditing(); }
+                else if (editor && typeof editor.open === 'function') { editor.open(); }
+                let editableEl = null;
+                if (editor) editableEl = editor.TEXTAREA || editor.textarea || editor.select || editor.selectElement || editor.htEditor || null;
+                if (!editableEl) editableEl = document.activeElement || TD && TD.querySelector && TD.querySelector('input,textarea,select');
+                if (editableEl) {
+                  try { const ev = new KeyboardEvent('keydown', {key: 'ArrowDown', code: 'ArrowDown', bubbles: true}); editableEl.dispatchEvent(ev); } catch (e) {}
+                }
+                try {
+                  const root = instance.rootElement || instance.rootDocument || document;
+                  const caret = root.querySelector && (root.querySelector('.handsontableSelectEditor .caret') || root.querySelector('.htDropdownCaret') || root.querySelector('.htAutocompleteCaret'));
+                  if (caret) caret.dispatchEvent(new MouseEvent('mousedown', {bubbles: true}));
+                } catch (e) {}
+              } catch (e) {}
+            }, 0);
+          }
+        },
+        afterChange: function(changes, source) {
+          if (!changes) return;
+          const instance = this;
+          changes.forEach(([row, prop, oldVal, newVal]) => {
+            try {
+              if (newVal === NONE_LABEL) {
+                instance.setDataAtCell(row, prop, '', 'normalize-none');
+              }
+            } catch (e) {}
+          });
+        }
+      });
+      container.handsontableInstance = hot;
+
+      try {
+        var wrapper = document.querySelector('.hot-responsive-wrapper.hot-hidden-until-ready');
+        if (wrapper) wrapper.classList.remove('hot-hidden-until-ready');
+      } catch (e) {}
+
+      function revealWhenReady() {
+        try { var body = document.body; if (body && body.classList.contains('fouc-hidden')) body.classList.remove('fouc-hidden'); } catch (e) {}
+        try { document.dispatchEvent(new Event('hot-ready')); } catch (e) { var evt = document.createEvent('Event'); evt.initEvent('hot-ready', true, true); document.dispatchEvent(evt); }
+      }
+
+      if (document.readyState === 'complete') {
+        revealWhenReady();
+      } else {
+        window.addEventListener('load', revealWhenReady, { once: true });
+        setTimeout(revealWhenReady, 3000);
+      }
+    }
+
+    // Wait until the required libs are present
+    function whenReady() {
+      if (typeof Handsontable !== 'undefined' && typeof HyperFormula !== 'undefined') {
+        init();
+      } else {
+        setTimeout(whenReady, 50);
+      }
+    }
+    whenReady();
+  })();
+  </script>
+
+</body>
+</html>

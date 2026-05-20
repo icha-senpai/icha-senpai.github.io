@@ -5,8 +5,15 @@
   "private": true,
   "scripts": {
     "optimize-images": "node scripts/optimize-images.js"
+    ,"build-commodity": "esbuild src/commodity-entry.js --bundle --minify --sourcemap --outfile=dist/commodity.bundle.js --format=iife --global-name=initCommodityBundle"
   },
   "dependencies": {
-    "sharp": "^0.32.0"
+    "sharp": "^0.32.0",
+    "handsontable": "^13.1.0",
+    "hyperformula": "^2.6.0",
+    "dompurify": "^2.4.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.18.11"
   }
 }
